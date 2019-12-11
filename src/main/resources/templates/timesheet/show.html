@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <style type="text/css">
+        .custom {
+            font-family: Courier;
+            color: white;
+            font-size:20px;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="base :: navlinks"></div>
+
+
+<div class="jumbotron jumbotron-fluid" style="background-color: whitesmoke">
+    <div class="container">
+        <h1 class="display-4 text-center">Timesheet</h1>
+    </div>
+</div>
+
+<div class="container custom" id="">
+    <div class="col-2"></div>
+    <div class="col-8 content">
+        <a href="/"class="btn btn-primary btn-sm active" role="button">Show All Timesheets</a><br />
+
+        Start Date :<span th:text="${timesheet.startDate} " class="form-control"></span><br />
+        End Date :<span th:text="${timesheet.endDate} " class="form-control"></span><br />
+
+        <a th:href="@{/delete/{id}(id=${timesheet.id})}" class="btn btn-primary btn-sm active" role="button">Delete this Flight</a>
+    </div>
+    <div class="col-2"></div>
+
+</div>
+
+
+
+</body>
+</html>

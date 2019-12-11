@@ -13,8 +13,11 @@
         <th>End Date</th>
     </tr>
     <tr th:each="timesheet : ${timesheets}">
+        <td th:text="${timesheet.employee}"></td>
         <td th:text="${timesheet.startDate}"></td>
         <td th:text="${timesheet.endDate}"></td>
+        <td th:text="${timesheet.stage}"></td>
+
         <td>
             <a th:href="@{/details/{id}(id=${timesheet.id})}">Details</a>
             <a th:href="@{/update/{id}(id=${timesheet.id})}">Update</a>
