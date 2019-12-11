@@ -115,11 +115,13 @@ public class JediModelAttributes {
 
 
         HashMap<String, Object> modelAttributes = new HashMap<>();
+        Object myEntity = Optional.ofNullable(getEntity()).orElse(new Object());
 
         modelAttributes.put("jediCode", getCode());
-        modelAttributes.put("jediEntity", Optional.ofNullable(getEntity()).orElse(new Object()));
+        modelAttributes.put("jediEntityClassName", myEntity.getClass().getName());
+        modelAttributes.put("jediEntity", myEntity);
         modelAttributes.put("jediMeta", meta);
-        modelAttributes.put("jediActionType",  this.action);
+        modelAttributes.put("jediActionType",  action);
         modelAttributes.put("jediError", getError());
         modelAttributes.put("jediSuccess", getSuccess());
         modelAttributes.put("jediInfo", getInfo());
@@ -129,9 +131,11 @@ public class JediModelAttributes {
 
     public String redirect(String url) {
         HashMap<String, Object> modelAttributes = new HashMap<>();
+        Object myEntity = Optional.ofNullable(getEntity()).orElse(new Object());
 
         modelAttributes.put("jediCode", getCode());
-        modelAttributes.put("jediEntity", Optional.ofNullable(getEntity()).orElse(new Object()).getClass());
+        modelAttributes.put("jediEntityClassName", myEntity.getClass().getName());
+        modelAttributes.put("jediEntity", myEntity);
         modelAttributes.put("jediMeta", meta);
         modelAttributes.put("jediActionType",  this.action);
         modelAttributes.put("jediError", getError());
