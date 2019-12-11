@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div th:replace="base :: navlinks"></div>
+
+<div class="container" >
+    ///check object name!! and action link
+    <form action="#" th:action="@{/processtimesheet}" th:object="${timesheet}" method="post"/>
+    enctype="multipart/form-data" class="custom">
+
+    <input type="hidden" th:field="*{id}"/>
+    <span th:if="${#fields.hasErrors('id')}"
+          th:errors="*{id}"></span>
+
+    Start Time :<input class="form-control" type="datetime-local" th:field="*{startTime}"/>
+    <span th:if="${#fields.hasErrors('startDate')}"
+          th:errors="*{startDate}"></span><br/>
+    End Time :<input class="form-control" type="datetime-local" th:field="*{endTime}"/>
+    <span th:if="${#fields.hasErrors('endDate')}"
+          th:errors="*{endDate}"></span><br/>
+    Pay Rate :<input class="form-control" type="number" th:field="*{payRate}"/>
+    <span th:if="${#fields.hasErrors('endDate')}"
+          th:errors="*{payRate}"></span><br/>
+    Pay Code :<input class="form-control" type="text" th:field="*{payCode}"/>
+    <span th:if="${#fields.hasErrors('endDate')}"
+          th:errors="*{payCode}"></span><br/>
+
+    <input class="form-control" type="hidden" th:field="*{activityList}"/>
+    <span> th:if="${#fields.hasErrors('endDate')}"
+          th:errors="*{endDate}"></span><br/></span>
+
+    <input class="form-control" type="hidden" th:field="*{stage}"/>
+    <span> th:if="${#fields.hasErrors('endDate')}"
+          th:errors="*{endDate}"></span><br/></span>
+
+    <input type="submit" value="Submit"/>
+    </form>
+</div>
+
+</body>
+</html>

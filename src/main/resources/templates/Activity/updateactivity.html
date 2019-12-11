@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Activity List</h1>
+<a href="/add">Add a Activity</a><br />
+<table>
+    <tr>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Pay Rate</th>
+        <th>Pay Code</th>
+
+    </tr>
+    <tr th:each="activity : ${activities}">
+        <td th:text="${activity.startTime}"></td>
+        <td th:text="${activity.endTime}"></td>
+        <td th:text="${activity.payRate}"></td>
+        <td th:text="${activity.payCode}"></td>
+        <td>
+            <a th:href="@{/details/{id}(id=${activity.id})}">Details</a>
+            <a th:href="@{/update/{id}(id=${activity.id})}">Update</a>
+            <a th:href="@{/delete/{id}(id=${activity.id})}">Delete</a>
+
+        </td></tr>
+</table>
+</body>
+</html>
