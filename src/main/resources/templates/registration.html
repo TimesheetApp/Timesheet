@@ -5,44 +5,86 @@
     <title>Title</title>
 </head>
 <body>
-<h4>New User Registration</h4>
+<h4>New User/Employee Registration</h4>
 <form autocomplete="off"
       action="#"
       th:action="@{/register}"
-      th:object="${user}" method="post">
+      th:object="${user}" method="post"> //does this need to be changed to employee?
 
-    First Name <mark><strong>
+    First Name: <mark><strong>
     <span th:if="${#fields.hasErrors('firstName')}"
           th:errors="*{firstName}">First Name Error</span></strong></mark>
     <input type="text" id="firstName" placeholder="First Name"
            th:field="*{firstName}" /><br />
 
-    Last Name <mark><strong>
+    Last Name: <mark><strong>
     <span th:if="${#fields.hasErrors('lastName')}"
           th:errors="*{lastName}">Last Name Error</span></strong></mark>
     <input type="text" id="lastName" placeholder="Last Name"
            th:field="*{lastName}" /><br />
 
-    Email <mark><strong>
+    Date of Birth: <mark><strong>
+    <span th:if="${#fields.hasErrors('dob')}"
+          th:errors="*{dob}">Last Name Error</span></strong></mark>
+    <input type="text" id="dob" placeholder="Date of Birth"
+           th:field="*{dob}" /><br />
+
+    Email: <mark><strong>
     <span th:if="${#fields.hasErrors('email')}"
           th:errors="*{email}">EmailError</span></strong></mark>
     <input type="text" id="email" placeholder="Email"
            th:field="*{email}" />
     <br/>
 
-    Username <mark><strong>
+    Address <mark><strong>
+    Street:
+    <span th:if="${#fields.hasErrors('address.zip')}"
+          th:errors="*{address}">Street Error</span></strong></mark>
+    <input type="text" id="address.zip" placeholder="zip"
+           th:field="*{address.zip}" /><br />
+
+    Street 2:
+    <span th:if="${#fields.hasErrors('address.street2')}"
+          th:errors="*{address}">Street2 Error</span></strong></mark>
+    <input type="text" id="address.street2" placeholder="street2"
+           th:field="*{address.street2}" /><br />
+
+    City:
+    <span th:if="${#fields.hasErrors('address.city')}"
+          th:errors="*{address}">City Error</span></strong></mark>
+    <input type="text" id="address.city" placeholder="city"
+           th:field="*{address.city}" /><br />
+
+    State:
+    <span th:if="${#fields.hasErrors('address.state')}"
+          th:errors="*{address}">State Error</span></strong></mark>
+    <input type="text" id="address.state" placeholder="state"
+           th:field="*{address.state}" /><br />
+
+    Zip:
+    <span th:if="${#fields.hasErrors('address.zip')}"
+          th:errors="*{address}">Zip Error</span></strong></mark>
+    <input type="text" id="address.zip" placeholder="zip"
+           th:field="*{address.zip}" /><br />
+
+    Username: <mark><strong>     // does this work with MyUserDetail
     <span th:if="${#fields.hasErrors('username')}"
           th:errors="*{username}">Username Error</span></strong></mark>
     <input type="text" id="username"
            placeholder="Username" th:field="*{username}" /><br />
 
-    Password <mark><strong>
-    <span th:if="${#fields.hasErrors('password')}"
+    Password: <mark><strong>
+    <span th:if="${#fields.hasErrors('passwordRaw')}"
           th:errors="*{password}">Password Error</span></strong></mark>
-    <input type="text" id="password" placeholder="password"
-           th:field="*{password}" /><br />
+    <input type="text" id="passwordRaw" placeholder="passwordRaw"
+           th:field="*{passwordRaw}" /><br />
+    <span th:if="${#fields.hasErrors('passwordVerify')}"
+          th:errors="*{password}">Password Error</span></strong></mark>
+    <input type="text" id="passwordVerify" placeholder="passwordVerify"
+           th:field="*{passwordVerify}" /><br />
 
     <button type="submit" class="btn btn-default">Submit</button>
 </form>
+
 </body>
 </html>
