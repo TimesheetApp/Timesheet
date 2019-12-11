@@ -1,12 +1,12 @@
 package jbc.timesheet.model;
 
-import javax.persistence.Id;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
+@Entity
 public class Activity {
 
     @Id
@@ -18,6 +18,7 @@ public class Activity {
 
     private double payRate;
 
+    @Enumerated(EnumType.STRING)
     private PayCode payCode;
 
 //    private Employee employee;

@@ -4,13 +4,13 @@ package jbc.timesheet.model;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.persistence.Id;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+@Entity
 public class Timesheet implements Serializable {
     @Id
     private long id;
@@ -21,6 +21,7 @@ public class Timesheet implements Serializable {
 
     private List<Activity> activityList;
 
+    @Enumerated(EnumType.STRING)
     private Stage stage;
 
     @Transient
