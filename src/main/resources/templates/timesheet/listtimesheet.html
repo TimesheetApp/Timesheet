@@ -12,7 +12,7 @@
         <th>Start Date</th>
         <th>End Date</th>
     </tr>
-    <tr th:each="timesheet : ${timesheets}">
+    <tr th:each="timesheet : ${jediEntity}">
         <td th:text="${timesheet.employee}"></td>
         <td th:text="${timesheet.startDate}"></td>
         <td th:text="${timesheet.endDate}"></td>

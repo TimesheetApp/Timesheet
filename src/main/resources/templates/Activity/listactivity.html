@@ -15,7 +15,7 @@
         <th>Pay Code</th>
 
     </tr>
-    <tr th:each="activity : ${activities}">
+    <tr th:each="activity : ${jediEntity}">
         <td th:text="${activity.startTime}"></td>
         <td th:text="${activity.endTime}"></td>
         <td th:text="${activity.payRate}"></td>
