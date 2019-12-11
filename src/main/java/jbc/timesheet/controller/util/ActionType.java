@@ -2,8 +2,8 @@ package jbc.timesheet.controller.util;
 
 public enum ActionType {
     DEFAULT,
-    PERSIST,
-    MERGE,
+    CREATE,
+    UPDATE,
     DELETE,
     LOGIN,
     LIST,
