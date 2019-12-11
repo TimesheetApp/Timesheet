@@ -22,7 +22,7 @@ public class Authority implements GrantedAuthority {
             mappedBy = "authorities"
             // Reverse end
     )
-    private Collection<UserDetail> userDetailCollection;
+    private Collection<MyUserDetail> myUserDetailCollection;
 
     public Authority() {
     }
@@ -48,12 +48,12 @@ public class Authority implements GrantedAuthority {
         this.authority = authority;
     }
 
-    public Collection<UserDetail> getUserDetailCollection() {
-        return userDetailCollection;
+    public Collection<MyUserDetail> getMyUserDetailCollection() {
+        return myUserDetailCollection;
     }
 
-    public void setUserDetailCollection(Collection<UserDetail> userDetailCollection) {
-        this.userDetailCollection = userDetailCollection;
+    public void setMyUserDetailCollection(Collection<MyUserDetail> myUserDetailCollection) {
+        this.myUserDetailCollection = myUserDetailCollection;
     }
 
     @Override

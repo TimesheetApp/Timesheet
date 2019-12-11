@@ -9,7 +9,7 @@ import java.util.Collection;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class UserDetail implements UserDetails {
+public class MyUserDetail implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,10 +36,10 @@ public class UserDetail implements UserDetails {
     private Collection<Authority> authorities;
 
 
-    public UserDetail() {
+    public MyUserDetail() {
     }
 
-    public UserDetail(String username, String password, Collection<Authority> authorities) {
+    public MyUserDetail(String username, String password, Collection<Authority> authorities) {
 
         this.username = username;
         this.password = password;
@@ -51,7 +51,7 @@ public class UserDetail implements UserDetails {
         this.enabled = true;
     }
 
-    public UserDetail(long id, String username, String password, Collection<Authority> authorities) {
+    public MyUserDetail(long id, String username, String password, Collection<Authority> authorities) {
         this.id = id;
         this.username = username;
         this.password = password;
