@@ -21,7 +21,11 @@ public class Activity {
     @Enumerated(EnumType.STRING)
     private PayCode payCode;
 
-//    private Employee employee;
+    @OneToOne (
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER
+    )
+    private Employee employee;
 
     @Transient
     public double getPay() {
