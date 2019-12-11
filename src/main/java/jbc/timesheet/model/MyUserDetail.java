@@ -21,6 +21,9 @@ public class MyUserDetail implements UserDetails {
     private String password;
 
     @Transient
+    private String passwordRaw;
+
+    @Transient
     private String passwordVerify;
 
     private boolean accountNonExpired;
@@ -87,6 +90,22 @@ public class MyUserDetail implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPasswordRaw() {
+        return passwordRaw;
+    }
+
+    public void setPasswordRaw(String passwordRaw) {
+        this.passwordRaw = passwordRaw;
+    }
+
+    public String getPasswordVerify() {
+        return passwordVerify;
+    }
+
+    public void setPasswordVerify(String passwordVerify) {
+        this.passwordVerify = passwordVerify;
     }
 
     @Override
