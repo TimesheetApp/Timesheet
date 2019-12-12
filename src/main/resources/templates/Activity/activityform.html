@@ -10,7 +10,7 @@
 
 <div class="container" >
     ///check object name!! and action link
-    <form action="#" th:action="@{/processtimesheet}" th:object="${jediEntity}" method="post"/>
+    <form action="#" th:action="@{${jediActionNext}}" th:object="${jediEntity}" th:method="${jediMethod}"/>
     enctype="multipart/form-data" class="custom">
 
     <input type="hidden" th:field="*{id}"/>

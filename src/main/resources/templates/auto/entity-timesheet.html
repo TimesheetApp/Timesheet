@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Timesheet</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/style.css}">
+
 </head>
 <body>
 <!---------------------------------------------------------------------
@@ -68,8 +72,21 @@ action handler for method 'post' of ActionType 'create'
         <!--/*@thymesVar id="jediEntity" type="jbc.timesheet.model.Timesheet"*/-->
         <!--/*@thymesVar id="jediActionNext" type="java.lang.String"*/-->
         <!--/*@thymesVar id="jediMethodNext" type="java.lang.String"*/-->
+
+
         <th:block th:if="${jediError}">
-            <pre style="display:block;white-space: pre-line; border: red 2px solid; font-size: 0.8rem; margin: 1rem; padding: 1rem;"><code><span th:text="${jediError}">...</span></code></pre></th:block>
+            <pre style="display:block;white-space: pre-line; border: red 2px solid; font-size: 0.8rem; margin: 1rem; padding: 1rem;"><code><span
+                    th:text="${jediError}">...</span></code></pre>
+        </th:block>
+
+        <div class="card text-center">
+            <div class="card-header">
+                Welcome
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Add a TimeSheet</h5>
+<!--                <p class="card-text">Please add a start and end date</p>-->
+
         <form action="#" class="custom" enctype="multipart/form-data" th:action="@{${jediActionNext}}"
               th:method="${jediMethodNext}" th:object="${jediEntity}">
 
@@ -91,7 +108,14 @@ action handler for method 'post' of ActionType 'create'
 
             <input type="submit" value="Submit"/>
         </form>
+<!--        <a href="#" class="btn btn-primary">Go somewhere</a>-->
+    </div>
+    <div class="card-footer text-muted">
+        Thank you!
+    </div>
+    </div>
     </div>
 </th:block>
+
 </body>
 </html>

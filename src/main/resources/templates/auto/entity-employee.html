@@ -10,88 +10,120 @@
 <!--/*@thymesVar id="jediActionNext" type="java.lang.String"*/-->
 <!--/*@thymesVar id="jediMethodNext" type="java.lang.String"*/-->
 
-<th:block th:fragment="action-get-create">Hello World</th:block>
+<th:block th:fragment="action-get-create">
 
-<h4>New User/Employee Registration</h4>
-<form autocomplete="off"
-      action="#"
-      th:action="@{/jediactionnext}"
-      th:object="${jediEntity}" method="post"> //does this need to be changed to employee?
 
-    First Name: <mark><strong>
+    <div class="card text-center">
+        <div class="card-header">
+            Employee Registration
+        </div>
+        <div class="card-body">
+            <h4>New User/Employee Registration</h4>
+            <form autocomplete="off"
+                  action="#"
+                  th:action="@{${jediActionNext}}"
+                  th:object="${jediEntity}" method="post">
+
+                First Name: <strong>
     <span th:if="${#fields.hasErrors('firstName')}"
-          th:errors="*{firstName}">First Name Error</span></strong></mark>
-    <input type="text" id="firstName" placeholder="First Name"
-           th:field="*{firstName}" /><br />
+          th:errors="*{firstName}">First Name Error</span></strong>
+                <input type="text" id="firstName" placeholder="First Name"
+                       th:field="*{firstName}"/><br/>
 
-    Last Name: <mark><strong>
+                Last Name:<strong>
     <span th:if="${#fields.hasErrors('lastName')}"
-          th:errors="*{lastName}">Last Name Error</span></strong></mark>
-    <input type="text" id="lastName" placeholder="Last Name"
-           th:field="*{lastName}" /><br />
+          th:errors="*{lastName}">Last Name Error</span></strong>
+                <input type="text" id="lastName" placeholder="Last Name"
+                       th:field="*{lastName}"/><br/>
 
-    Date of Birth: <mark><strong>
+                Date of Birth:<strong>
     <span th:if="${#fields.hasErrors('dob')}"
-          th:errors="*{dob}">Last Name Error</span></strong></mark>
-    <input type="text" id="dob" placeholder="Date of Birth"
-           th:field="*{dob}" /><br />
+          th:errors="*{dob}">Last Name Error</span></strong>
+                <input type="text" id="dob" placeholder="Date of Birth"
+                       th:field="*{dob}"/><br/>
 
-    Email: <mark><strong>
+                Email:<strong>
     <span th:if="${#fields.hasErrors('email')}"
-          th:errors="*{email}">EmailError</span></strong></mark>
-    <input type="text" id="email" placeholder="Email"
-           th:field="*{email}" />
-    <br/>
+          th:errors="*{email}">EmailError</span></strong>
+                <input type="text" id="email" placeholder="Email"
+                       th:field="*{email}"/>
+                <br/>
 
-    Address <mark><strong>
-        Street:
-        <span th:if="${#fields.hasErrors('address.zip')}"
-              th:errors="*{address}">Street Error</span></strong></mark>
-    <input type="text" id="address.street" placeholder="zip"
-           th:field="*{address.zip}" /><br />
+                <h4>Address</h4><strong>
+                Street:
+                <span th:if="${#fields.hasErrors('address.street')}"
+                      th:errors="*{address}">Street Error</span></strong>
+                <input type="text" id="address.street" placeholder="street"
+                       th:field="*{address.street}"/><br/>
 
-    Street 2:
-    <span th:if="${#fields.hasErrors('address.street2')}"
-          th:errors="*{address}">Street2 Error</span></strong></mark>
-    <input type="text" id="address.street2" placeholder="street2"
-           th:field="*{address.street2}" /><br />
+                Street 2:
+                <span th:if="${#fields.hasErrors('address.street2')}"
+                      th:errors="*{address}">Street2 Error</span></strong>
+                <input type="text" id="address.street2" placeholder="street2"
+                       th:field="*{address.street2}"/><br/>
 
-    City:
-    <span th:if="${#fields.hasErrors('address.city')}"
-          th:errors="*{address}">City Error</span></strong></mark>
-    <input type="text" id="address.city" placeholder="city"
-           th:field="*{address.city}" /><br />
+                City:
+                <span th:if="${#fields.hasErrors('address.city')}"
+                      th:errors="*{address}">City Error</span></strong>
+                <input type="text" id="address.city" placeholder="city"
+                       th:field="*{address.city}"/><br/>
 
-    State:
-    <span th:if="${#fields.hasErrors('address.state')}"
-          th:errors="*{address}">State Error</span></strong></mark>
-    <input type="text" id="address.state" placeholder="state"
-           th:field="*{address.state}" /><br />
+                State:
+                <span th:if="${#fields.hasErrors('address.state')}"
+                      th:errors="*{address}">State Error</span></strong>
+                <input type="text" id="address.state" placeholder="state"
+                       th:field="*{address.state}"/><br/>
 
-    Zip:
-    <span th:if="${#fields.hasErrors('address.zip')}"
-          th:errors="*{address}">Zip Error</span></strong></mark>
-    <input type="text" id="address.zip" placeholder="zip"
-           th:field="*{address.zip}" /><br />
-
-    Username: <mark><strong>     // does this work with MyUserDetail
+                Zip:
+                <span th:if="${#fields.hasErrors('address.zip')}"
+                      th:errors="*{address}">Zip Error</span></strong>
+                <input type="text" id="address.zip" placeholder="zip"
+                       th:field="*{address.zip}"/><br/>
+            <h4>Username and Password</h4>
+                Username:<strong>
         <span th:if="${#fields.hasErrors('username')}"
-              th:errors="*{username}">Username Error</span></strong></mark>
-    <input type="text" id="username"
-           placeholder="Username" th:field="*{username}" /><br />
+              th:errors="*{username}">Username Error</span></strong>
+                <input type="text" id="username"
+                       placeholder="Username" th:field="*{username}"/><br/>
 
-    Password: <mark><strong>
+                Password:<strong>
     <span th:if="${#fields.hasErrors('passwordRaw')}"
-          th:errors="*{password}">Password Error</span></strong></mark>
-    <input type="text" id="passwordRaw" placeholder="passwordRaw"
-           th:field="*{passwordRaw}" /><br />
-    <span th:if="${#fields.hasErrors('passwordVerify')}"
-          th:errors="*{password}">Password Error</span></strong></mark>
-    <input type="text" id="passwordVerify" placeholder="passwordVerify"
-           th:field="*{passwordVerify}" /><br />
+          th:errors="*{password}">Password Error</span></strong>
+                <input type="text" id="passwordRaw" placeholder="passwordRaw"
+                       th:field="*{passwordRaw}"/><br/>
+                <span th:if="${#fields.hasErrors('passwordVerify')}"
+                      th:errors="*{password}">Password Error</span></strong>
+                <input type="text" id="passwordVerify" placeholder="passwordVerify"
+                       th:field="*{passwordVerify}"/><br/>
 
-    <button type="submit" class="btn btn-default">Submit</button>
-</form>
+                <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+        </div>
+        <div class="card-footer text-muted">
+    Thank you!        </div>
+    </div>
+</th:block>
+
+<th:block th:fragment="action-get-view">
+    <span th:text="${jediEntity.firstName}">John</span>
+    <span th:text="${jediEntity.lastName}">Doe</span>
+    <span th:text="${jediEntity.address.street}">123 JBC Street</span>
+
+    <a th:href="@{/employee/update(id=${jediEntity.id})}">Edit</a>
+    <a th:href="@{/employee/delete(id=${jediEntity.id})}">Delete</a>
+
+
+</th:block>
+
+<th:block th:fragment="action-get-list">
+
+    <th:block th:each="jediEntity : ${jediEntityCollection}">
+        <span th:text="${jediEntity.firstName}">John</span>
+        <span th:text="${jediEntity.lastName}">Doe</span>
+        <a th:href="@{/employee/view(id=${jediEntity.id})}">View</a>
+
+    </th:block>
+</th:block>
 
 </body>
 </html>
