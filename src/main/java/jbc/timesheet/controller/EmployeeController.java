@@ -1,5 +1,6 @@
 package jbc.timesheet.controller;
 
+import jbc.timesheet.controller.iface.JediController;
 import jbc.timesheet.model.Employee;
 import jbc.timesheet.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,11 @@ public class EmployeeController implements JediController<EmployeeRepository, Em
     @Override
     public String getTemplatePrefix() {
         return "employee";
+    }
+
+    @Override
+    public Long getId(Employee employee) {
+        return employee.getId();
     }
 
 

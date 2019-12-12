@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <title>Nav</title>
+</head>
+<body>
+<!--
+https://material.io/resources/icons/?icon=accessible&style=baseline
+https://ionicons.com/ -->
+<div th:fragment="AllMenu" id="Menu">
+    <nav th:fragment="MainMenu" id="MainMenu" class="nav active">
+        <a href="/" class="brand">
+            Ts</a>
+        <a th:replace="::nav-link(
+            label='Timesheet',
+            href='javascript: document.getElementById(\'Menu\').activateMenu(document.getElementById(\'DepartmentsMenu\'));',
+            icon='list_alt',
+            theme='filled',
+            class='')">link</a>
+        <a th:replace="::nav-link(
+            label='Employee',
+            href='javascript: document.getElementById(\'Menu\').activateMenu(document.getElementById(\'EmployeesMenu\'));',
+            icon='face',
+            theme='filled',
+            class='')">link</a>
+
+        <th:block sec:authorize="!hasAuthority('USER')">
+            <a th:replace="::nav-link(
+                label='Login',
+                href='/login',
+                icon='account_box',
+                theme='filled',
+                class='edge')">link</a>
+        </th:block>
+        <th:block sec:authorize="hasAuthority('USER')">
+            <a th:replace="::nav-link(
+                label='Logout',
+                href='/logout',
+                icon='exit_to_app',
+                theme='filled',
+                class='edge')">link</a>
+        </th:block>
+
+    </nav>
+    <nav th:fragment="EmployeesMenu" id="EmployeesMenu" class="nav inactive">
+        <a th:replace="::nav-link(
+            label='Back',
+            href='javascript: document.getElementById(\'Menu\').activateMenu(document.getElementById(\'MainMenu\'));',
+            icon='arrow_back',
+            theme='filled',
+            class='')">link</a>
+        <a th:replace="::nav-link(
+            label='Employee',
+            href='#',
+            icon='face',
+            theme='filled',
+            class='active')">link</a>
+        <a th:replace="::nav-link(
+            label='Search',
+            href='/employee/search',
+            icon='search',
+            theme='filled',
+            class='')">link</a>
+        <th:block sec:authorize="hasAuthority('ADMIN')">
+            <a th:replace="::nav-link(
+                label='Add',
+                href='/employee/add',
+                icon='person_add',
+                theme='filled',
+                class='')">link</a>
+        </th:block>
+
+    </nav>
+    <nav th:fragment="DepartmentsMenu" id="DepartmentsMenu" class="nav inactive">
+        <a th:replace="::nav-link(
+            label='Back',
+            href='javascript: document.getElementById(\'Menu\').activateMenu(document.getElementById(\'MainMenu\'));',
+            icon='arrow_back',
+            theme='filled',
+            class='')">link</a>
+        <a th:replace="::nav-link(
+            label='Timesheet',
+            href='#',
+            icon='list_alt',
+            theme='filled',
+            class='active')">link</a>
+        <a th:replace="::nav-link(
+            label='Search',
+            href='/timesheet/search',
+            icon='search',
+            theme='filled',
+            class='')">link</a>
+        <th:block sec:authorize="hasAuthority('ADMIN')">
+            <a th:replace="::nav-link(
+                label='Add',
+                href='/timesheet/create',
+                icon='add_box',
+                theme='filled',
+                class='')">link</a>
+        </th:block>
+
+    </nav>
+    <script>
+        (function (scope) {
+            var self = this;
+            self.current = document.getElementById('MainMenu');
+
+
+            self.getCurrent = function () {
+                return self.current;
+            }
+
+            self.setCurrent = function (menu) {
+
+                self.current.classList.add("inactive");
+                self.current.classList.remove("active");
+
+
+                self.current = menu;
+
+                self.current.classList.add("active");
+                self.current.classList.remove("inactive");
+
+
+            }
+
+            scope.activateMenu = function(selectedMenu) {
+                self.setCurrent(selectedMenu);
+            }
+
+
+        }(document.getElementById('Menu')));
+    </script>
+</div>
+<th:block th:remove="all">
+    <!-- See: https://material.io/resources/icons/?icon=accessible&style=baseline -->
+    theme = filled, outlined, two-tone, round, sharp
+    <a class="nav-item nav-link" th:fragment="nav-link(label, href, icon, theme, class)"
+       th:classappend="${class}" th:href="${href}">
+        <span><i th:class="'ion-icon material-icons'+${theme!='filled'?'-'+theme:''}" th:text="${icon}">link</i></span>
+        <div class="nav-item-label" th:text="${label}">Link</div>
+    </a>
+</th:block>
+</body>
+</html>

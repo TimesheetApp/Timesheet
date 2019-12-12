@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Timesheet</title>
+</head>
+<body>
+<!---------------------------------------------------------------------
+Timesheet Template
+
+This HTML file is contain multiple template fragment for Timesheet
+a fragment is look like
+
+<th:block th:fragment="action-post-create">
+... ... ...
+... ... ...
+</th:block>
+
+the fragment name is 'action-post-create' mean that it is an
+action handler for method 'post' of ActionType 'create'
+
+
+---------------------------------------------------------------------->
+
+<th:block th:fragment="action-get-create">
+    <th:block th:replace="::action-any-create-update">
+        WE SHARE ONE FRAGMENT action-any-create-update
+    </th:block>
+</th:block>
+
+<th:block th:fragment="action-post-create">
+    <th:block th:replace="::action-any-create-update">
+        WE SHARE ONE FRAGMENT action-any-create-update
+    </th:block>
+</th:block>
+
+<th:block th:fragment="action-get-update">
+    <th:block th:replace="::action-any-create-update">
+        WE SHARE ONE FRAGMENT action-any-create-update
+    </th:block>
+</th:block>
+
+<th:block th:fragment="action-post-update">
+    <th:block th:replace="::action-any-create-update">
+        WE SHARE ONE FRAGMENT action-any-create-update
+    </th:block>
+</th:block>
+
+<th:block th:fragment="action-any-create-update">
+    <div class="container">
+        <!--    ///check object name!! and action link
+
+
+        There was an error in the template below
+
+            <form action="#" th:action="@{/processtimesheet}" th:object="${timesheet}" method="post"/>
+                                                                                                     ^-- HERE!
+            enctype="multipart/form-data" class="custom">
+
+
+
+        -->
+        <!-- KEEP THE LINE BELOW, <...@thymesVar... IT IS NOT A COMMENT
+            You shoud change it according to jediEntity variable type
+            in  this case it is Timesheet (use fully qualify name, include package name, like below)
+
+        -->
+        <!--/*@thymesVar id="jediEntity" type="jbc.timesheet.model.Timesheet"*/-->
+        <!--/*@thymesVar id="jediActionNext" type="java.lang.String"*/-->
+        <!--/*@thymesVar id="jediMethodNext" type="java.lang.String"*/-->
+        <th:block th:if="${jediError}">
+            <pre style="display:block;white-space: pre-line; border: red 2px solid; font-size: 0.8rem; margin: 1rem; padding: 1rem;"><code><span th:text="${jediError}">...</span></code></pre></th:block>
+        <form action="#" class="custom" enctype="multipart/form-data" th:action="@{${jediActionNext}}"
+              th:method="${jediMethodNext}" th:object="${jediEntity}">
+
+            <input th:field="*{id}" type="hidden"/>
+
+            Start Date :<input class="form-control" th:field="*{startDate}" type="date"/>
+            <span th:errors="${jediEntity.startDate}"
+                  th:if="${#fields.hasErrors('startDate')}"></span><br/>
+            End Date :<input class="form-control" th:field="*{endDate}" type="date"/>
+            <span th:errors="${jediEntity.endDate}"
+                  th:if="${#fields.hasErrors('endDate')}"></span><br/>
+
+            <input th:field="*{activityList}" type="hidden"/>
+
+            <input th:field="*{stage}" type="hidden"/>
+
+            <input th:field="*{employee}" type="hidden"/>
+
+
+            <input type="submit" value="Submit"/>
+        </form>
+    </div>
+</th:block>
+</body>
+</html>

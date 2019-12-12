@@ -1,0 +1,207 @@
+/* The sidebar menu */
+.nav {
+    height: 100%; /* Full-height: remove this if you want "auto" height */
+    width: 100px; /* Set the width of the sidebar */
+    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    left: 0;
+    background-color: #2a3842; /* Black */
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 20px;
+    min-height: 450px;
+    flex-direction: column;
+    -ms-flex-direction: column;
+
+}
+#display {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0 0 0 100px;
+    position: absolute;
+}
+.nav .brand {
+    font-family: 'Mina', 'Dosis',sans-serif;
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: #f88800;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 5px;
+    padding-bottom: 0;
+    width: 100%;
+    text-align: center;
+    display: block;
+}
+
+.nav .user {
+    font-size: 0.8rem;
+    color: #5e9d9f;
+    width: 100%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 2px;
+    display: block;
+    position: relative;
+    max-width: 75px;
+    animation: moving 20s infinite;
+    animation-direction: alternate;
+}
+@keyframes moving {
+    from {left: 40px;}
+    to {left: -40px;}
+}
+
+/* The navigation menu links */
+a.nav-item {
+    font-family: 'Dosis', sans-serif;
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 16px;
+    color: #f1f1f1;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    padding-left: 2px;
+    padding-right: 2px;
+    text-align: center;
+    /*text-transform: uppercase;*/
+}
+a.nav-item i {
+    font-size: 48px;
+    display: inline-block;
+    margin: 0 auto;
+    width: 48px;
+}
+
+a.nav-item:before {
+    font-size: 48px;
+    margin: 0 auto;
+}
+
+a:hover.nav-item {
+    background-color: #643700;
+}
+
+a.nav-item .nav-item-label {
+    display: inline-block;
+    width: 100%;
+    white-space: pre-line;
+    overflow-x: hidden;
+}
+
+nav.nav.active {
+    display: block;
+}
+
+nav.nav.inactive {
+    display: none;
+}
+
+a.nav-item.active {
+    color: #f88800;
+}
+a.nav-item.inactive {
+    color: #f1f1f1;
+}
+a.nav-item.edge {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+a.nav-item.flip-x i {
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+}
+/* long - narrow -> less width/flex-column */
+@media
+screen and (min-height: 576px) and (max-width: 992px) {
+
+    .nav {
+        padding-top: 12px;
+        width: 75px;
+        flex-direction: column!important;
+        -ms-flex-direction: column!important;
+    }
+
+    #display {
+        padding-top: 0;
+        padding-left: 75px;
+    }
+    .nav .brand {
+        font-size: 1.5rem;
+    }
+    a.nav-item {
+        font-size: 14px;
+    }
+
+    a.nav-item svg {
+        width: 24px;
+        height: 24px;
+    }
+    a.nav-item i {
+        font-size: 24px;
+        width: 24px;
+    }
+}
+
+/* short - wide */
+@media screen and (max-height: 576px) and (min-width: 576px) {
+    .nav {
+
+        width: 100%;
+        height: 65px;
+        flex-direction: row!important;
+        -ms-flex-direction: row!important;
+        min-height: 60px;
+        padding-top: 2px;
+        padding-left: 5px;
+        vertical-align: middle;
+        overflow: hidden;
+    }
+    #display {
+        padding-left: 0;
+        padding-top: 65px;
+    }
+    .nav .brand {
+        display: inline-block;
+        font-size: 1.5rem;
+        width: fit-content;
+        margin: auto 5px;
+        min-width: 60px;
+        min-height: 100%;
+        vertical-align: text-bottom;
+    }
+
+    a.nav-item {
+        font-size: 14px;
+        display: inline-block;
+        margin: auto 5px;
+        min-width: 60px;
+        width: fit-content;
+    }
+
+    a.nav-item i {
+        font-size: 24px;
+        width: 24px;
+    }
+}
+
+/* short - narrow -> hide */
+@media
+screen and (max-height: 576px) and (max-width: 576px),
+screen and (max-height: 400px),
+screen and (max-width: 400px)
+{
+
+    .nav {
+        display: none!important;
+    }
+    #display {
+        padding: 0;
+    }
+}

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Timesheet</title>
+    <title>Login</title>
     <!-- Responsive -->
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1" />
 
@@ -19,12 +19,11 @@
             integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
             crossorigin="anonymous"></script>
     <!--  /Bootstrap 4.3.1  -->
-
     <!-- Google Web Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Carrois+Gothic+SC|Dosis|Mina:400,700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap" rel="stylesheet">
-    <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+
     <link rel="stylesheet" th:href="@{/css/common.css}" />
     <link rel="stylesheet" th:href="@{/css/nav.css}" />
     <link rel="stylesheet" th:href="@{/css/form.css}" />
@@ -32,45 +31,22 @@
 <body>
 <nav th:replace="jedi/nav :: AllMenu">...</nav>
 <div id="display">
-    <div class="container-flex pl-2">
-        <th:block th:replace="~{__${jediAutoTemplate}__} ?: ~{:: fragment-not-found}">
-            Load Auto Template base on datatype
-
-        </th:block>
+    <div class="alert alert-danger" th:if="${param.error}">Invalid username or password</div>
+    <div class="alert alert-primary" th:if="${param.logout}">You have been logged out</div>
+    <div th:fragment="action-get-login" class="container pt-3 text-center" style="max-width: 400px;">
+    <form class="form-signin" method="post" action="/login">
+        <h2 class="form-signin-heading">Please sign in</h2>
+        <p>
+            <label for="username" class="sr-only">Username</label>
+            <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
+        </p>
+        <p>
+            <label for="password" class="sr-only">Password</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+        </p>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    </form>
     </div>
-<th:block th:remove="all">
-    <th:block th:fragment="fragment-not-found">
-
-        <h1>404 Fragment not found</h1>
-        <pre><code th:inline="text" style="font-size: 1.2rem;">
-    The Jedi could not find the requested force at
-<p style="padding: 1rem;margin:0.3rem; border: #67335a 2px solid;font-size: 1.6rem;text-align: center">
-'/resources/templates/<b>[[${jediAutoTemplate}]]</b>'
-
-</p>
-    Please implement the 'directory/filename :: fragment-name', or the Darklord will come and get you.
-
-    Note:
-
-        When you see '<b>directory</b>/<b>filename</b> :: <b>fragment-name</b>', it means that you must create a html file
-        '<b>filename</b><span style="color:red">.html</span>' in folder '<span style="color:red">/resources/templates/</span><b>directory</b>'
-        with the following html tag inside that file:
-
-        <span style="color:#f88800">&lt;<span style="color:#67335a">th</span>:block</span> th:fragment="<b>fragment-name</b>"<span style="color:#f88800">&gt;</span>
-            ... ... ... ...
-            ... ... ... ...
-            ... ... ... ...
-        <span style="color:#f88800">&lt;/<span style="color:#67335a">th</span>:block&gt;</span>
-
-
-
-
-        <th:block th:if="${jediError}">The backend also complained about '<span th:text="${jediError}">...</span>'</th:block>
-
--- The Jedi
-        </code></pre>
-    </th:block>
-</th:block>
 </div>
 </body>
 </html>

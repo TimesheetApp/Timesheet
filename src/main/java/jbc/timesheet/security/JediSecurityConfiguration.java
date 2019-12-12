@@ -69,17 +69,17 @@ public class JediSecurityConfiguration extends WebSecurityConfigurerAdapter {
                             "/blogEntry/delete/**")
                     .access("hasAnyRole('USER', 'ADMIN')");
 
-        httpSecurity    .authorizeRequests()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .formLogin();
-
 //        httpSecurity    .authorizeRequests()
 //                .anyRequest()
 //                .authenticated()
 //                .and()
-//                .formLogin().loginPage("/login").permitAll();
+//                .formLogin();
+
+        httpSecurity    .authorizeRequests()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .formLogin().loginPage("/login").permitAll();
 
         httpSecurity    .authorizeRequests()
                 .and()
