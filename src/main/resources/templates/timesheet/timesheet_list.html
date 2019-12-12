@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<!--/*@thymesVar id="jediEntity" type="java.util.List<jbc.timesheet.model.Timesheet>"*/-->
+<!--/*@thymesVar id="timesheet" type="jbc.timesheet.model.Timesheet"*/-->
+<body>
+<h1>Timesheet List</h1>
+<a href="/create">Add a Timesheet</a><br />
+<table>
+    <tr>
+        <th>Start Date</th>
+        <th>End Date</th>
+    </tr>
+    <tr th:each="timesheet : ${jediEntity}">
+
+        <td th:text="${timesheet.startDate}"></td>
+        <td th:text="${timesheet.endDate}"></td>
+        <td>
+            <a th:href="@{/details/{id}(id=${timesheet.id})}">Details</a>
+            <a th:href="@{/update/{id}(id=${timesheet.id})}">Update</a>
+            <a th:href="@{/delete/{id}(id=${timesheet.id})}">Delete</a>
+
+        </td></tr>
+</table>
+</body>
+</html>
