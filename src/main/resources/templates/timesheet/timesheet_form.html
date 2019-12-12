@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div th:replace="base :: navlinks"></div>
+
+<div class="container">
+<!--    ///check object name!! and action link
+
+
+There was an error in the template below
+
+    <form action="#" th:action="@{/processtimesheet}" th:object="${timesheet}" method="post"/>
+                                                                                             ^-- HERE!
+    enctype="multipart/form-data" class="custom">
+
+
+
+-->
+    <!-- KEEP THE LINE BELOW, <...@thymesVar... IT IS NOT A COMMENT
+        You shoud change it according to jediEntity variable type
+        in  this case it is Timesheet (use fully qualify name, include package name, like below)
+
+    -->
+    <!--/*@thymesVar id="jediEntity" type="jbc.timesheet.model.Timesheet"*/-->
+    <!--/*@thymesVar id="jediAction" type="java.lang.String"*/-->
+    <!--/*@thymesVar id="jediMethod" type="java.lang.String"*/-->
+    <form action="#" th:action="@{${jediAction}}" th:object="${jediEntity}" th:method="${jediMethod}"
+    enctype="multipart/form-data" class="custom">
+
+    <input type="hidden" th:field="*{id}"/>
+
+    Start Date :<input class="form-control" type="date" th:field="*{startDate}"/>
+    <span th:if="${#fields.hasErrors('startDate')}"
+          th:errors="${jediEntity.startDate}"></span><br/>
+    End Date :<input class="form-control" type="date" th:field="*{endDate}"/>
+    <span th:if="${#fields.hasErrors('endDate')}"
+          th:errors="${jediEntity.endDate}"></span><br/>
+
+    <input type="hidden" th:field="*{activityList}"/>
+
+    <input type="hidden" th:field="*{stage}"/>
+
+    <input type="hidden" th:field="*{employee}"/>
+
+
+
+    <input type="submit" value="Submit"/>
+    </form>
+</div>
+
+</body>
+</html>

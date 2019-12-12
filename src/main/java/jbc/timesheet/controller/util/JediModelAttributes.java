@@ -2,16 +2,17 @@ package jbc.timesheet.controller.util;
 
 import jbc.timesheet.configuration.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.ui.Model;
 
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.Optional;
+import java.util.Objects;
 
 
-public class JediModelAttributes {
+public class JediModelAttributes<ENTITY> {
 
     @Autowired
     private ApplicationProperties applicationProperties;
@@ -20,31 +21,33 @@ public class JediModelAttributes {
     private String error;
     private String success;
     private String info;
-    private Object entity;
+    private ENTITY entity;
     private Object meta;
-    private ActionType action;
+    private ActionType actionType;
+    private String action;
+    private HttpMethod method;
 
     public JediModelAttributes() {
         this(HttpURLConnection.HTTP_OK, ActionType.DEFAULT);
     }
 
-    public JediModelAttributes(int status, ActionType action) {
+    public JediModelAttributes(int status, ActionType actionType) {
         this(HttpURLConnection.HTTP_OK, null, ActionType.DEFAULT);
     }
 
-    public JediModelAttributes(int code, Object entity, ActionType action) {
+    public JediModelAttributes(int code, ENTITY entity, ActionType actionType) {
         this.code = code;
         this.entity = entity;
-        this.action = action;
+        this.actionType = actionType;
     }
 
-    public JediModelAttributes(int code, String error, String success, String info, Object entity, ActionType action) {
+    public JediModelAttributes(int code, String error, String success, String info, ENTITY entity, ActionType actionType) {
         this.code = code;
         this.error = error;
         this.success = success;
         this.info = info;
         this.entity = entity;
-        this.action = action;
+        this.actionType = actionType;
     }
 
     public JediModelAttributes(int code) {
@@ -83,11 +86,11 @@ public class JediModelAttributes {
         this.info = info;
     }
 
-    public Object getEntity() {
+    public ENTITY getEntity() {
         return entity;
     }
 
-    public void setEntity(Object entity) {
+    public void setEntity(ENTITY entity) {
         this.entity = entity;
     }
 
@@ -99,45 +102,66 @@ public class JediModelAttributes {
         this.meta = meta;
     }
 
-    public ActionType getAction() {
+    public ActionType getActionType() {
+        return actionType;
+    }
+
+    public void setActionType(ActionType actionType) {
+        this.actionType = actionType;
+    }
+
+    public String getAction() {
         return action;
     }
 
-    public void setAction(ActionType action) {
+    public void setAction(String action) {
         this.action = action;
     }
 
+    public HttpMethod getMethod() {
+        return method;
+    }
+
+    public void setMethod(HttpMethod method) {
+        this.method = method;
+    }
+
     public String view(Model model) {
-        return view(model, applicationProperties.getDefaultTemplate());
+        return view(model, "jedi/main");
     }
 
     public String view(Model model, String template) {
 
 
         HashMap<String, Object> modelAttributes = new HashMap<>();
-        Object myEntity = Optional.ofNullable(getEntity()).orElse(new Object());
+        ENTITY myEntity = Objects.requireNonNull(getEntity());
 
         modelAttributes.put("jediCode", getCode());
         modelAttributes.put("jediEntityClassName", myEntity.getClass().getName());
         modelAttributes.put("jediEntity", myEntity);
         modelAttributes.put("jediMeta", meta);
-        modelAttributes.put("jediActionType",  action);
+        modelAttributes.put("jediActionType", actionType);
+        modelAttributes.put("jediAction", action);
+        modelAttributes.put("jediMethod", method);
         modelAttributes.put("jediError", getError());
         modelAttributes.put("jediSuccess", getSuccess());
         modelAttributes.put("jediInfo", getInfo());
+        System.out.println(myEntity.getClass().getName());
         model.addAllAttributes(modelAttributes);
         return template;
     }
 
     public String redirect(String url) {
         HashMap<String, Object> modelAttributes = new HashMap<>();
-        Object myEntity = Optional.ofNullable(getEntity()).orElse(new Object());
+        ENTITY myEntity = Objects.requireNonNull(getEntity());
 
         modelAttributes.put("jediCode", getCode());
         modelAttributes.put("jediEntityClassName", myEntity.getClass().getName());
         modelAttributes.put("jediEntity", myEntity);
         modelAttributes.put("jediMeta", meta);
-        modelAttributes.put("jediActionType",  this.action);
+        modelAttributes.put("jediActionType",  this.actionType);
+        modelAttributes.put("jediAction", action);
+        modelAttributes.put("jediMethod", method);
         modelAttributes.put("jediError", getError());
         modelAttributes.put("jediSuccess", getSuccess());
         modelAttributes.put("jediInfo", getInfo());

@@ -15,6 +15,7 @@ public class JediSecurityController {
     public String login(Model model) {
 
         JediModelAttributes jediModelAttributes = new JediModelAttributes(200,null, ActionType.LOGIN);
+
        return jediModelAttributes.view(model);
     }
 }
