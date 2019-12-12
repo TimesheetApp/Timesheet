@@ -52,14 +52,15 @@ public class TimesheetController  {
     @GetMapping("/view{id}")
     public String viewTimesheetform(@PathVariable("id") Long id, Model model){
         model.addAttribute("timesheet", timesheetRepository.findById(id).get());
-        return "timesheetform";
+        return "listtimesheet";
     }
 
-    @GetMapping("/show")
+    @GetMapping("/list")
     public String viewTimesheetform(Model model){
         model.addAttribute("timesheets", timesheetRepository.findAll());
-        return "listtimesheetform";
+        return "listtimesheet";
     }
+
 
 
     }
