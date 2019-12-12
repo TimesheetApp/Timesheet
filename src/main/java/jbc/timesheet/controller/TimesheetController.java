@@ -1,66 +1,40 @@
 package jbc.timesheet.controller;
 
 
+import jbc.timesheet.controller.iface.JediController;
 import jbc.timesheet.model.Timesheet;
 import jbc.timesheet.repository.TimesheetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/timesheet")
-public class TimesheetController  {
+public class TimesheetController implements JediController<TimesheetRepository, Timesheet, Long> {
 
     @Autowired
     TimesheetRepository timesheetRepository;
 
-    //Create (addTimesheet)
-    @GetMapping("/create")
-    public String createTimesheetform(Model model){
-        model.addAttribute("timesheet", new Timesheet());
-        return "timesheetform";
-
+    @Override
+    public Timesheet newEntity() {
+        return new Timesheet();
     }
 
-    @PostMapping("/process")
-    public String processTimesheetform(@Valid @ModelAttribute Timesheet timesheet, BindingResult result){
-
-        if(result.hasErrors()){
-            return "timesheetform";
-        }
-
-        timesheetRepository.save(timesheet);
-        return "redirect:/";
+    @Override
+    public TimesheetRepository getRepository() {
+        return timesheetRepository;
     }
 
-    @GetMapping("/update/{id}")
-    public String updateTimesheetform(@PathVariable("id") Long id, Model model){
-        model.addAttribute("timesheet", timesheetRepository.findById(id).get());
-        return "timesheetform";
+    @Override
+    public String getTemplatePrefix() {
+        return "timesheet";
     }
 
-    @RequestMapping("/delete/{id}")
-    public String deleteTimesheetform(@PathVariable("id") long id){
-        timesheetRepository.deleteById(id);
-        return "redirect:/";
-    }
-
-    @GetMapping("/view{id}")
-    public String viewTimesheetform(@PathVariable("id") Long id, Model model){
-        model.addAttribute("timesheet", timesheetRepository.findById(id).get());
-        return "timesheetform";
-    }
-
-    @GetMapping("/show")
-    public String viewTimesheetform(Model model){
-        model.addAttribute("timesheets", timesheetRepository.findAll());
-        return "listtimesheetform";
+    @Override
+    public Long getId(Timesheet timesheet) {
+        return timesheet.getId();
     }
 
 
-    }
+}
 

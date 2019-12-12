@@ -1,0 +1,30 @@
+html {
+    height: 100vh;
+    width: 100vw;
+}
+body {
+    margin: 0;
+    padding: 0;
+   /* background-color: #cfcfcf; */
+    font-family: 'Roboto Mono', monospace;
+    background-color: #cfcfcf;
+    color: #3b5557;
+    font-size: 1.1rem;
+    height: 100vh;
+    width: 100vw;
+}
+
+#display .container-flex {
+
+    overflow: hidden;
+
+}
+
+a {
+    color: #43213a;
+}
+
+a:hover {
+    color: #643700;
+    text-decoration: none;
+}

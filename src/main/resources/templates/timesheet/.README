@@ -1,0 +1,27 @@
+Filenames changed!
+
+timesheetform -> timesheet_form
+
+listtimesheet -> timesheet_list
+
+We need:
+
+timesheet_detail - View detail of single timesheet
+
+
+Note
+
+This line
+<!--/*@thymesVar id="jediEntity" type="java.util.List<jbc.timesheet.model.Timesheet>"*/-->
+
+will tell thymeleaf that jediEntity is a List of Timesheet
+
+This line
+<!--/*@thymesVar id="jediEntity" type="jbc.timesheet.model.Timesheet"*/-->
+
+will tell thymeleaf that jediEntity is Timesheet
+
+It will get rid of the red underline and make your life easier, do not delete. KEEP it!
+
+
+'jediAction' will tell you where to submit the form
