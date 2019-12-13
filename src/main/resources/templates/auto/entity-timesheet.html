@@ -93,7 +93,7 @@ action handler for method 'post' of ActionType 'create'
             <input th:field="*{id}" type="hidden"/>
 
             Start Date :<input class="form-control" th:field="*{isoStartDate}" type="date"/>
-            <span th:errors="${jediEntity.startDate}"
+            <span th:errors="${jediEntity.isoStartDate}"
                   th:if="${#fields.hasErrors('isoStartDate')}"></span><br/>
             End Date :<input class="form-control" th:field="*{isoEndDate}" type="date"/>
             <span th:errors="${jediEntity.isoEndDate}"
