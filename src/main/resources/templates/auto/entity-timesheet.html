@@ -92,12 +92,12 @@ action handler for method 'post' of ActionType 'create'
 
             <input th:field="*{id}" type="hidden"/>
 
-            Start Date :<input class="form-control" th:field="*{startDate}" type="date"/>
+            Start Date :<input class="form-control" th:field="*{isoStartDate}" type="date"/>
             <span th:errors="${jediEntity.startDate}"
-                  th:if="${#fields.hasErrors('startDate')}"></span><br/>
-            End Date :<input class="form-control" th:field="*{endDate}" type="date"/>
-            <span th:errors="${jediEntity.endDate}"
-                  th:if="${#fields.hasErrors('endDate')}"></span><br/>
+                  th:if="${#fields.hasErrors('isoStartDate')}"></span><br/>
+            End Date :<input class="form-control" th:field="*{isoEndDate}" type="date"/>
+            <span th:errors="${jediEntity.isoEndDate}"
+                  th:if="${#fields.hasErrors('isoEndDate')}"></span><br/>
 
             <input th:field="*{activityList}" type="hidden"/>
 
@@ -116,6 +116,33 @@ action handler for method 'post' of ActionType 'create'
     </div>
     </div>
 </th:block>
+
+
+<th:block th:fragment="action-get-view">
+    <th:block th:replace="::message">DISPLAY MESSAGES</th:block>
+    <h2 class="display-4">Timesheet Information</h2><br />
+    <span th:text="${jediEntity.startDate}">11/12/19</span>
+    <span th:text="${jediEntity.endDate}">11/16/19</span>
+
+    <a th:href="@{/timesheet/update/{id}(id=${jediEntity.id})}">Edit</a>
+    <a th:href="@{/timesheet/delete/{id}(id=${jediEntity.id})}">Delete</a>
+
+
+</th:block>
+
+<th:block th:fragment="action-get-list">
+    <h2 class="display-4">Timesheet Directory</h2>
+    <ul>
+        <th:block th:each="jediEntity : ${jediEntityCollection}">
+            <li><a th:href="@{/timesheet/view/{id}(id=${jediEntity.id})}">
+                <span th:text="${jediEntity.isoStartDate}">John</span>
+                <span th:text="${jediEntity.isoEndDate}">Doe</span>
+            </a>
+            </li>
+        </th:block>
+    </ul>
+</th:block>
+
 
 </body>
 </html>
