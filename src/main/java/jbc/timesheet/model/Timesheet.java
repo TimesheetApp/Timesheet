@@ -20,6 +20,8 @@ public class Timesheet {
 
     private LocalDate endDate;
 
+    private LocalDate creationDate;
+
     @OneToMany (
             cascade = CascadeType.ALL,
             fetch = FetchType.EAGER,
@@ -91,6 +93,14 @@ public class Timesheet {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    public LocalDate getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
     }
 
     public List<Activity> getActivityList() {

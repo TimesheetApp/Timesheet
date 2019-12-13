@@ -1,6 +1,9 @@
 package jbc.timesheet.controller.util;
 
+import jbc.timesheet.configuration.ApplicationProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 
 import java.io.UnsupportedEncodingException;
@@ -12,13 +15,12 @@ import java.util.Objects;
 
 public class JediModelAttributes<ENTITY> {
 
-
     private int code;
     private String error;
     private String success;
     private String info;
     private ENTITY entity;
-    private Object meta;
+    private Object entityCollection;
     private ActionType actionType;
     private HttpMethod requestedMethod;
     private String action;
@@ -90,12 +92,12 @@ public class JediModelAttributes<ENTITY> {
         this.entity = entity;
     }
 
-    public Object getMeta() {
-        return meta;
+    public Object getEntityCollection() {
+        return entityCollection;
     }
 
-    public void setMeta(Object meta) {
-        this.meta = meta;
+    public void setEntityCollection(Object entityCollection) {
+        this.entityCollection = entityCollection;
     }
 
     public ActionType getActionType() {
@@ -143,7 +145,7 @@ public class JediModelAttributes<ENTITY> {
         modelAttributes.put("jediCode", getCode());
         modelAttributes.put("jediEntityClassName", getClassName());
         modelAttributes.put("jediEntity", myEntity);
-        modelAttributes.put("jediMeta", meta);
+        modelAttributes.put("jediEntityCollection", entityCollection);
         modelAttributes.put("jediActionType", actionType);
         modelAttributes.put("jediRequestedMethod", requestedMethod);
         modelAttributes.put("jediActionNext", action);
@@ -164,7 +166,7 @@ public class JediModelAttributes<ENTITY> {
         modelAttributes.put("jediCode", getCode());
         modelAttributes.put("jediEntityClassName", getClassName());
         modelAttributes.put("jediEntity", myEntity);
-        modelAttributes.put("jediMeta", meta);
+        modelAttributes.put("jediEntityCollection", entityCollection);
         modelAttributes.put("jediActionType",  this.actionType);
         modelAttributes.put("jediRequestedMethod", requestedMethod);
         modelAttributes.put("jediActionNext", action);
@@ -220,13 +222,11 @@ public class JediModelAttributes<ENTITY> {
         String name = myEntity.getClass().getName();
         String simpleName = myEntity.getClass().getSimpleName();
 
-        if (name.equals("java.util.ArrayList")) {
-            simpleName = meta.getClass().getSimpleName();
+        if ((entityCollection != null) && (entityCollection.getClass().getName().equals("java.util.ArrayList"))) {
 
-            if (meta.getClass().getName().startsWith("jbc.timesheet.model."))
-                name = "jbc.timesheet.model."+simpleName;
-            else
-                name = meta.getClass().getName()+"-arraylist";
+
+            if (!name.startsWith("jbc.timesheet.model."))
+                name = name+"-arraylist";
         }
 
         if (name.startsWith("jbc.timesheet.model."))

@@ -10,7 +10,8 @@ import java.util.Collection;
 public class Authority implements GrantedAuthority {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name = "Authority", sequenceName = "AuthorityId", initialValue = 1001, allocationSize = 1)
+    @GeneratedValue(generator = "Authority")
     private long id;
 
     @NaturalId
