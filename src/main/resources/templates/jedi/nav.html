@@ -25,7 +25,7 @@ https://ionicons.com/ -->
             theme='filled',
             class='')">link</a>
 
-        <th:block sec:authorize="!hasAuthority('USER')">
+        <th:block sec:authorize="!isAuthenticated()">
             <a th:replace="::nav-link(
                 label='Login',
                 href='/login',
@@ -33,7 +33,7 @@ https://ionicons.com/ -->
                 theme='filled',
                 class='edge')">link</a>
         </th:block>
-        <th:block sec:authorize="hasAuthority('USER')">
+        <th:block sec:authorize="isAuthenticated()">
             <a th:replace="::nav-link(
                 label='Logout',
                 href='/logout',
@@ -62,14 +62,14 @@ https://ionicons.com/ -->
             icon='search',
             theme='filled',
             class='')">link</a>
-        <th:block sec:authorize="hasAuthority('ADMIN')">
-            <a th:replace="::nav-link(
-                label='Add',
-                href='/employee/add',
-                icon='person_add',
-                theme='filled',
-                class='')">link</a>
-        </th:block>
+
+        <a th:replace="::nav-link(
+            label='Register',
+            href='/employee/create',
+            icon='person_add',
+            theme='filled',
+            class='')">link</a>
+
 
     </nav>
     <nav th:fragment="DepartmentsMenu" id="DepartmentsMenu" class="nav inactive">

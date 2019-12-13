@@ -27,6 +27,13 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
 
     Iterable<ENTITY> searchEntity(String... query);
 
+    @GetMapping(value = {"/","{id}"})
+    default String index(@PathVariable("id") ID id, Model model) {
+        JediModelAttributes<ENTITY> jediModelAttributes =
+            new JediModelAttributes<ENTITY>(HttpsURLConnection.HTTP_OK,newEntity(), ActionType.DEFAULT, HttpMethod.GET);
+        return jediModelAttributes.view(model);
+    }
+
     @GetMapping("/create")
     default String getCreate(Model model) {
 
@@ -48,7 +55,7 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
 //          ${jediMethodNext} will be assigned to 'POST'
 //          (see below for matching value)
 
-        jediModelAttributes.setAction("create");
+        jediModelAttributes.setAction("/"+getTemplatePrefix()+"/create");
         jediModelAttributes.setMethod(HttpMethod.POST);
 
         return jediModelAttributes.view(model);
@@ -60,27 +67,33 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
 
         @SuppressWarnings("unchecked")
         JediModelAttributes<ENTITY> jediModelAttributes =
-                new JediModelAttributes<ENTITY>(HttpsURLConnection.HTTP_OK, (ENTITY) getRepository().findById(id).orElse(null), ActionType.UPDATE, HttpMethod.GET);
+                new JediModelAttributes<ENTITY>(HttpsURLConnection.HTTP_OK, (ENTITY) getRepository().findById(id).orElse(newEntity()), ActionType.UPDATE, HttpMethod.GET);
 
         if (!optionalEntity.isPresent()) {
             jediModelAttributes.setError("Object not found");
-            return jediModelAttributes.redirect("/view/error");
+            return jediModelAttributes.redirect("/"+getTemplatePrefix()+"/retrieve/"+id);
         }
-        jediModelAttributes.setAction("update");
+        jediModelAttributes.setAction("/"+getTemplatePrefix()+"/update");
         jediModelAttributes.setMethod(HttpMethod.POST);
         return jediModelAttributes.view(model);
     }
 
-    @GetMapping(value = {"/view/{id}", "/retrieve/{id}"})
-    default String getViewId(@PathVariable("id") ID id, Model model){
+    @GetMapping("/view/{id}")
+    default String getViewId(@PathVariable("id") ID id, Model model) {
+        return "redirect:/"+getTemplatePrefix()+"/retrieve/"+id+"?info=URL+/view+is+depreciated.+Please+use+/retrieve";
+    }
+
+    @GetMapping("/retrieve/{id}")
+    default String getRetrieveId(@PathVariable("id") ID id, Model model){
         @SuppressWarnings("unchecked")
         Optional<ENTITY> optionalEntity = getRepository().findById(id);
         JediModelAttributes<ENTITY> jediModelAttributes =
-                new JediModelAttributes<ENTITY>(HttpsURLConnection.HTTP_OK,(ENTITY) optionalEntity.orElse(null), ActionType.VIEW, HttpMethod.GET);
+                new JediModelAttributes<ENTITY>(HttpsURLConnection.HTTP_OK,(ENTITY) optionalEntity.orElse(newEntity()), ActionType.VIEW, HttpMethod.GET);
 
         if (!optionalEntity.isPresent()) {
+            jediModelAttributes.setCode(HttpsURLConnection.HTTP_NOT_FOUND);
             jediModelAttributes.setError("Object not found");
-            return jediModelAttributes.redirect("/view/error");
+            return jediModelAttributes.redirect("/"+getTemplatePrefix()+"/"+id);
         }
 
          return jediModelAttributes.view(model);
@@ -95,7 +108,7 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
 
             getRepository().deleteById(id);
 
-            jediModelAttributes.setSuccess("Object deleted");
+            jediModelAttributes.setSuccess("Object '"+id.toString()+"' deleted");
             jediModelAttributes.setCode(HttpsURLConnection.HTTP_OK);
         } else {
             jediModelAttributes.setError("Object id='"+id.toString()+"' not found");
@@ -103,10 +116,10 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
         }
 
 
-        return jediModelAttributes.view(model);
+        return jediModelAttributes.redirect("/"+getTemplatePrefix()+"/"+id);
     }
 
-    @GetMapping(value={"/search"})
+    @GetMapping("/search")
     default String getSearch(Model model, @PathVariable("q") Optional<String> query){
         Iterable<ENTITY> jediEntityCollection;
         if (query.isPresent()) {
@@ -123,14 +136,18 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
         return jediModelAttributes.view(model);
     }
 
+    default void preProcess(ENTITY entity, BindingResult result) {
+
+    }
 
     @PostMapping(value={"/process","/update", "/create"})
-    default String postProcess(Model model, @Valid @ModelAttribute ENTITY entity, BindingResult result){
-
+    default String postProcess(Model model, @Valid @ModelAttribute("jediEntity") ENTITY entity, BindingResult result){
+        preProcess(entity, result);
         if(result.hasErrors()){
+            System.out.println("Form Error:\n"+result.toString());
             JediModelAttributes<ENTITY> jediModelAttributes =
                     new JediModelAttributes<ENTITY>(HttpsURLConnection.HTTP_OK, entity, getId(entity).equals(0)?ActionType.CREATE:ActionType.UPDATE, HttpMethod.POST);
-            jediModelAttributes.setAction(getId(entity).equals(0)?"create":"update");
+            jediModelAttributes.setAction("/"+getTemplatePrefix()+(getId(entity).equals(0)?"/create":"/update"));
             jediModelAttributes.setError("Jedi reject your form because your form could not pass the validations. \n\n"+result.toString());
             jediModelAttributes.setMethod(HttpMethod.POST);
             return jediModelAttributes.view(model);
@@ -140,6 +157,6 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
 
         JediModelAttributes<ENTITY> jediModelAttributes =
                 new JediModelAttributes<ENTITY>(HttpsURLConnection.HTTP_OK,entity, getId(entity).equals(0)?ActionType.CREATE:ActionType.UPDATE, HttpMethod.POST);
-        return jediModelAttributes.redirect("view/"+getId(entity));
+        return jediModelAttributes.redirect("/"+getTemplatePrefix()+"/retrieve/"+getId(entity));
     }
 }

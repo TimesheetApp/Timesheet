@@ -1,10 +1,9 @@
 package jbc.timesheet.model;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
+import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
 @Entity
@@ -16,9 +15,11 @@ public class Employee extends MyUserDetail {
 
     private String lastName;
 
+
     private LocalDate dob;
 
-    private String email;
+    @Pattern(regexp = "^..../../..$", message="must be a valid ISO date")
+    private String isoDob;
 
     private String ssn;
 
@@ -36,12 +37,11 @@ public class Employee extends MyUserDetail {
     public Employee() {
     }
 
-    public Employee(long id, String username, String password, Collection<Authority> authorities, String firstName, String lastName, LocalDate dob, String email, String ssn, Address address, String phone) {
-        super(id, username, password, authorities);
+    public Employee(long id, String email,String password, Collection<Authority> authorities, String firstName, String lastName, LocalDate dob,  String ssn, Address address, String phone) {
+        super(id, email, password, authorities);
         this.firstName = firstName;
         this.lastName = lastName;
         this.dob = dob;
-        this.email = email;
         this.ssn = ssn;
         this.address = address;
         this.phone = phone;
@@ -80,12 +80,18 @@ public class Employee extends MyUserDetail {
         this.dob = dob;
     }
 
-    public String getEmail() {
-        return email;
+    @Transient
+    public String getIsoDob() {
+        if (dob == null)
+            return LocalDate.now().format(DateTimeFormatter.ISO_DATE);
+
+        isoDob = dob.format(DateTimeFormatter.ISO_DATE);
+
+        return isoDob;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setIsoDob(String isoDob) {
+        dob = LocalDate.parse(isoDob,DateTimeFormatter.ISO_DATE);
     }
 
     public String getSsn() {

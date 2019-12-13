@@ -7,24 +7,61 @@
 <body>
 
 <!--/*@thymesVar id="jediEntity" type="jbc.timesheet.model.Employee"*/-->
+<!--/*@thymesVar id="jediEntityCollection" type="java.util.ArrayList<jbc.timesheet.model.Employee>"*/-->
 <!--/*@thymesVar id="jediActionNext" type="java.lang.String"*/-->
 <!--/*@thymesVar id="jediMethodNext" type="java.lang.String"*/-->
+<th:block th:fragment="message">
+    <div class="alert alert-danger" th:if="${param.jediError}" th:text="${param.jediError}">Unknown Error!</div>
+    <div class="alert alert-success" th:if="${param.jediSuccess}" th:text="${param.jediSuccess}">Unknown Success Message!</div>
+    <div class="alert alert-info" th:if="${param.jediInfo}" th:text="${param.jediInfo}">Unknown Info Message!</div>
+</th:block>
+
+<th:block th:fragment="action-get-default">
+    <th:block th:replace="::message">DISPLAY MESSAGES</th:block>
+    <h1 class="display-4" th:if="${param.jediError}" th:text="${param.jediError}">Unknown Error!</h1>
+</th:block>
 
 <th:block th:fragment="action-get-create">
+    <th:block th:replace="::action-any-create-update">
+        WE SHARE ONE FRAGMENT action-any-create-update
+    </th:block>
+</th:block>
 
 
-    <div class="card text-center">
+<th:block th:fragment="action-get-update">
+    <th:block th:replace="::action-any-create-update">
+        WE SHARE ONE FRAGMENT action-any-create-update
+    </th:block>
+</th:block>
+
+<th:block th:fragment="action-post-update">
+    <th:block th:replace="::action-any-create-update">
+        WE SHARE ONE FRAGMENT action-any-create-update
+    </th:block>
+</th:block>
+
+
+<th:block th:fragment="action-get-delete">
+
+DELETED!
+
+</th:block>
+
+<th:block th:fragment="action-any-create-update">
+    <th:block th:replace="::message">DISPLAY MESSAGES</th:block>
+    <div class="card my-3 mx-auto" style="max-width: 500px;">
         <div class="card-header">
-            Employee Registration
+            <b>Add/Modify Employee Information</b>
         </div>
         <div class="card-body">
-            <h4>New User/Employee Registration</h4>
+            <h4>Employee</h4>
             <form autocomplete="off"
                   action="#"
                   th:action="@{${jediActionNext}}"
                   th:object="${jediEntity}" method="post">
-
+    <input type="hidden" th:field="*{id}">
                 First Name: <strong>
+
     <span th:if="${#fields.hasErrors('firstName')}"
           th:errors="*{firstName}">First Name Error</span></strong>
                 <input type="text" id="firstName" placeholder="First Name"
@@ -37,18 +74,13 @@
                        th:field="*{lastName}"/><br/>
 
                 Date of Birth:<strong>
-    <span th:if="${#fields.hasErrors('dob')}"
-          th:errors="*{dob}">Last Name Error</span></strong>
-                <input type="text" id="dob" placeholder="Date of Birth"
-                       th:field="*{dob}"/><br/>
+    <span th:if="${#fields.hasErrors('isoDob')}"
+          th:errors="*{isoDob}">Last Name Error</span></strong>
+                <input type="date" id="isoDob" placeholder="Date of Birth"
+                       th:field="*{isoDob}"/><br/>
 
-                Email:<strong>
-    <span th:if="${#fields.hasErrors('email')}"
-          th:errors="*{email}">EmailError</span></strong>
-                <input type="text" id="email" placeholder="Email"
-                       th:field="*{email}"/>
                 <br/>
-
+<br>
                 <h4>Address</h4><strong>
                 Street:
                 <span th:if="${#fields.hasErrors('address.street')}"
@@ -79,24 +111,30 @@
                       th:errors="*{address}">Zip Error</span></strong>
                 <input type="text" id="address.zip" placeholder="zip"
                        th:field="*{address.zip}"/><br/>
-            <h4>Username and Password</h4>
-                Username:<strong>
-        <span th:if="${#fields.hasErrors('username')}"
-              th:errors="*{username}">Username Error</span></strong>
-                <input type="text" id="username"
-                       placeholder="Username" th:field="*{username}"/><br/>
 
-                Password:<strong>
-    <span th:if="${#fields.hasErrors('passwordRaw')}"
-          th:errors="*{password}">Password Error</span></strong>
-                <input type="text" id="passwordRaw" placeholder="passwordRaw"
-                       th:field="*{passwordRaw}"/><br/>
-                <span th:if="${#fields.hasErrors('passwordVerify')}"
-                      th:errors="*{password}">Password Error</span></strong>
-                <input type="text" id="passwordVerify" placeholder="passwordVerify"
-                       th:field="*{passwordVerify}"/><br/>
+                <br><br>
+        <h4><b>Password</b></h4>
+        <div class="border p-2">
 
-                <button type="submit" class="btn btn-default">Submit</button>
+            Username (Email):<strong>
+            <span th:if="${#fields.hasErrors('username')}"
+                  th:errors="*{username}">Password Error</span></strong>
+            <input type="text" id="username" placeholder="Email"
+                   th:field="*{username}"/><br/>
+
+            Password:<strong>
+            <span th:if="${#fields.hasErrors('passwordRaw')}"
+              th:errors="*{passwordRaw}">Password Error</span></strong>
+            <input type="text" id="passwordRaw" placeholder="Password"
+                   th:field="*{passwordRaw}"/><br/>
+
+            Password Verify:<strong>
+            <span th:if="${#fields.hasErrors('passwordVerify')}"
+                  th:errors="*{passwordVerify}">Password Error</span></strong>
+            <input type="text" id="passwordVerify" placeholder="Verify Password"
+                   th:field="*{passwordVerify}"/><br/>
+        </div><br>
+        <button type="submit" class="btn btn-success">Submit</button>
             </form>
         </div>
         <div class="card-footer text-muted">
@@ -105,24 +143,30 @@
 </th:block>
 
 <th:block th:fragment="action-get-view">
+    <th:block th:replace="::message">DISPLAY MESSAGES</th:block>
+    <h2 class="display-4">Employee Information</h2><br />
     <span th:text="${jediEntity.firstName}">John</span>
     <span th:text="${jediEntity.lastName}">Doe</span>
     <span th:text="${jediEntity.address.street}">123 JBC Street</span>
+    <span th:text="${jediEntity.address.street2}">APT 112</span>
 
-    <a th:href="@{/employee/update(id=${jediEntity.id})}">Edit</a>
-    <a th:href="@{/employee/delete(id=${jediEntity.id})}">Delete</a>
+    <a th:href="@{/employee/update/{id}(id=${jediEntity.id})}">Edit</a>
+    <a th:href="@{/employee/delete/{id}(id=${jediEntity.id})}">Delete</a>
 
 
 </th:block>
 
 <th:block th:fragment="action-get-list">
-
-    <th:block th:each="jediEntity : ${jediEntityCollection}">
-        <span th:text="${jediEntity.firstName}">John</span>
-        <span th:text="${jediEntity.lastName}">Doe</span>
-        <a th:href="@{/employee/view(id=${jediEntity.id})}">View</a>
-
-    </th:block>
+    <h2 class="display-4">Employee Directory</h2>
+    <ul>
+        <th:block th:each="jediEntity : ${jediEntityCollection}">
+            <li><a th:href="@{/employee/view/{id}(id=${jediEntity.id})}">
+            <span th:text="${jediEntity.firstName}">John</span>
+            <span th:text="${jediEntity.lastName}">Doe</span>
+            </a>
+            </li>
+        </th:block>
+    </ul>
 </th:block>
 
 </body>

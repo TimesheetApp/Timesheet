@@ -1,10 +1,15 @@
 package jbc.timesheet.model;
 
 
+import jbc.timesheet.security.JediPasswordEncoder;
 import org.hibernate.annotations.NaturalId;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.Collection;
 
 @Entity
@@ -16,7 +21,13 @@ public class MyUserDetail implements UserDetails {
     @GeneratedValue(generator = "MyUserDetail")
     private long id;
 
-    @NaturalId
+    @NaturalId(mutable=true)
+    @NotEmpty
+    @NotNull
+    @Size(min = 3, max=320, message="email too short or too long")
+    @Pattern(
+            message="must be a valid email address",
+            regexp="(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])")
     private String username;
 
     private String password;
@@ -41,6 +52,10 @@ public class MyUserDetail implements UserDetails {
 
 
     public MyUserDetail() {
+        this.accountNonExpired = true;
+        this.accountNonLocked = true;
+        this.credentialsNonExpired = true;
+        this.enabled = true;
     }
 
     public MyUserDetail(String username, String password, Collection<Authority> authorities) {
@@ -93,14 +108,21 @@ public class MyUserDetail implements UserDetails {
         this.password = password;
     }
 
+    @Transient
     public String getPasswordRaw() {
         return passwordRaw;
     }
 
     public void setPasswordRaw(String passwordRaw) {
         this.passwordRaw = passwordRaw;
+
+        if (passwordRaw.trim().equals(""))
+            return;
+
+        this.password = JediPasswordEncoder.getInstance().encode(passwordRaw);
     }
 
+    @Transient
     public String getPasswordVerify() {
         return passwordVerify;
     }
