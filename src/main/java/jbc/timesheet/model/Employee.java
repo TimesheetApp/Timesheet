@@ -22,6 +22,7 @@ public class Employee extends MyUserDetail {
 
     private String ssn;
 
+
     @Embedded
     @AttributeOverride(name="street", column=@Column(name="addressStreet"))
     @AttributeOverride(name="street2", column=@Column(name="addressStreet2"))

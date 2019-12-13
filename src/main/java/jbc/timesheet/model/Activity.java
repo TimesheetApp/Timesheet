@@ -10,6 +10,8 @@ import java.time.temporal.ChronoUnit;
 public class Activity {
 
     @Id
+    @SequenceGenerator(name = "Activity", sequenceName = "ActivityId", initialValue = 1001, allocationSize = 1)
+    @GeneratedValue(generator = "Activity")
     private long id;
 
     private LocalDateTime start;
@@ -21,7 +23,7 @@ public class Activity {
     @Enumerated(EnumType.STRING)
     private PayCode payCode;
 
-    @OneToOne (
+    @ManyToOne (
             cascade = CascadeType.ALL,
             fetch = FetchType.EAGER
     )

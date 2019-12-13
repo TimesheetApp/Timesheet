@@ -12,4 +12,6 @@ public class ApplicationProperties {
     public String getDefaultTemplate() {
         return defaultTemplate;
     }
+
+
 }

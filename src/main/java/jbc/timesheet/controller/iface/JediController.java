@@ -1,7 +1,9 @@
 package jbc.timesheet.controller.iface;
 
+import jbc.timesheet.configuration.ApplicationProperties;
 import jbc.timesheet.controller.util.ActionType;
 import jbc.timesheet.controller.util.JediModelAttributes;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpMethod;
 import org.springframework.ui.Model;
@@ -22,6 +24,8 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
     String getTemplatePrefix();
 
     ID getId(ENTITY entity);
+
+    Iterable<ENTITY> searchEntity(String... query);
 
     @GetMapping("/create")
     default String getCreate(Model model) {
@@ -52,9 +56,16 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
 
     @GetMapping("/update/{id}")
     default String getUpdateId(@PathVariable("id") ID id, Model model){
+        Optional<ENTITY> optionalEntity = getRepository().findById(id);
+
         @SuppressWarnings("unchecked")
         JediModelAttributes<ENTITY> jediModelAttributes =
-                new JediModelAttributes<ENTITY>(HttpsURLConnection.HTTP_OK, (ENTITY) getRepository().findById(id), ActionType.UPDATE, HttpMethod.GET);
+                new JediModelAttributes<ENTITY>(HttpsURLConnection.HTTP_OK, (ENTITY) getRepository().findById(id).orElse(null), ActionType.UPDATE, HttpMethod.GET);
+
+        if (!optionalEntity.isPresent()) {
+            jediModelAttributes.setError("Object not found");
+            return jediModelAttributes.redirect("/view/error");
+        }
         jediModelAttributes.setAction("update");
         jediModelAttributes.setMethod(HttpMethod.POST);
         return jediModelAttributes.view(model);
@@ -96,11 +107,19 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
     }
 
     @GetMapping(value={"/search"})
-    default String getShow(Model model){
-        @SuppressWarnings("unchecked")
+    default String getSearch(Model model, @PathVariable("q") Optional<String> query){
+        Iterable<ENTITY> jediEntityCollection;
+        if (query.isPresent()) {
+            jediEntityCollection = searchEntity(query.get());
+        } else {
+            jediEntityCollection = getRepository().findAll();
+        }
+
+
+
         JediModelAttributes<ENTITY> jediModelAttributes =
-                new JediModelAttributes<ENTITY>(HttpsURLConnection.HTTP_OK,(ENTITY) getRepository().findAll(), ActionType.LIST, HttpMethod.GET);
-        jediModelAttributes.setMeta(newEntity());
+                new JediModelAttributes<ENTITY>(HttpsURLConnection.HTTP_OK,newEntity(), ActionType.LIST, HttpMethod.GET);
+        jediModelAttributes.setEntityCollection(jediEntityCollection);
         return jediModelAttributes.view(model);
     }
 

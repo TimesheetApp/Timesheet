@@ -36,5 +36,10 @@ public class TimesheetController implements JediController<TimesheetRepository, 
         return timesheet.getId();
     }
 
+    @Override
+    public Iterable<Timesheet> searchEntity(String... query) {
+        return timesheetRepository.findAll();
+    }
+
 
 }

@@ -12,7 +12,8 @@ import java.util.Collection;
 public class MyUserDetail implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name = "MyUserDetail", sequenceName = "MyUserDetailId", initialValue = 1001, allocationSize = 1)
+    @GeneratedValue(generator = "MyUserDetail")
     private long id;
 
     @NaturalId
@@ -157,4 +158,7 @@ public class MyUserDetail implements UserDetails {
     public String toString() {
         return this.username;
     }
+
+    //TODO: LISTENER !!!
+
 }
