@@ -83,6 +83,10 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
         return "redirect:/"+getTemplatePrefix()+"/retrieve/"+id+"?info=URL+/view+is+depreciated.+Please+use+/retrieve";
     }
 
+    default void preRetrieve(ENTITY entity) {
+
+    }
+
     @GetMapping("/retrieve/{id}")
     default String getRetrieveId(@PathVariable("id") ID id, Model model){
         @SuppressWarnings("unchecked")
@@ -96,7 +100,12 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
             return jediModelAttributes.redirect("/"+getTemplatePrefix()+"/"+id);
         }
 
+        preRetrieve(optionalEntity.get());
+
          return jediModelAttributes.view(model);
+    }
+    default void preDelete(ID id) {
+
     }
 
     @GetMapping("/delete/{id}")
@@ -105,6 +114,8 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
                 new JediModelAttributes<ENTITY>(HttpsURLConnection.HTTP_OK,newEntity(), ActionType.DELETE, HttpMethod.GET);
 
         if (getRepository().existsById(id)) {
+
+            preDelete(id);
 
             getRepository().deleteById(id);
 
