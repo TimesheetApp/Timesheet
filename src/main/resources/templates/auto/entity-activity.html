@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<!--/*@thymesVar id="jediEntity" type="jbc.timesheet.model.Employee"*/-->
+<!--/*@thymesVar id="jediEntityCollection" type="java.util.ArrayList<jbc.timesheet.model.Employee>"*/-->
+<!--/*@thymesVar id="jediActionNext" type="java.lang.String"*/-->
+<!--/*@thymesVar id="jediMethodNext" type="java.lang.String"*/-->
+<th:block th:fragment="message">
+    <div class="alert alert-danger" th:if="${param.jediError}" th:text="${param.jediError}">Unknown Error!</div>
+    <div class="alert alert-success" th:if="${param.jediSuccess}" th:text="${param.jediSuccess}">Unknown Success
+        Message!
+    </div>
+    <div class="alert alert-info" th:if="${param.jediInfo}" th:text="${param.jediInfo}">Unknown Info Message!</div>
+</th:block>
+
+<th:block th:fragment="action-get-default">
+    <th:block th:replace="::message">DISPLAY MESSAGES</th:block>
+    <h1 class="display-4" th:if="${param.jediError}" th:text="${param.jediError}">Unknown Error!</h1>
+</th:block>
+
+<th:block th:fragment="action-get-create">
+    <th:block th:replace="::action-any-create-update">
+        WE SHARE ONE FRAGMENT action-any-create-update
+    </th:block>
+</th:block>
+
+
+<th:block th:fragment="action-get-update">
+    <th:block th:replace="::action-any-create-update">
+        WE SHARE ONE FRAGMENT action-any-create-update
+    </th:block>
+</th:block>
+
+<th:block th:fragment="action-post-update">
+    <th:block th:replace="::action-any-create-update">
+        WE SHARE ONE FRAGMENT action-any-create-update
+    </th:block>
+</th:block>
+
+
+<th:block th:fragment="action-get-delete">
+
+    DELETED!
+
+</th:block>
+
+
+<th:block th:fragment="action-any-create-update">
+
+    <div class="container">
+        ///check object name!! and action link
+        <form action="#" th:action="@{${jediActionNext}}" th:object="${jediEntity}" th:method="${jediMethodNext}"
+        enctype="multipart/form-data" class="custom">
+
+        <input type="hidden" th:field="*{id}"/>
+        <span th:if="${#fields.hasErrors('id')}"
+              th:errors="*{id}"></span>
+
+        Start Time :<input class="form-control" type="datetime-local" th:field="*{isoStartTime}"/>
+        <span th:if="${#fields.hasErrors('isoStartTime')}"
+              th:errors="*{isoStartDate}"></span><br/>
+        End Time :<input class="form-control" type="datetime-local" th:field="*{isoEndTime}"/>
+        <span th:if="${#fields.hasErrors('isoEndTime')}"
+              th:errors="*{isoEndDate}"></span><br/>
+        Pay Rate :<input class="form-control" type="number" th:field="*{payRate}"/>
+        <span th:if="${#fields.hasErrors('payRate')}"
+              th:errors="*{payRate}"></span><br/>
+        Pay Code :<input class="form-control" type="text" th:field="*{payCode}"/>
+        <span th:if="${#fields.hasErrors('payCode')}"
+              th:errors="*{payCode}"></span><br/>
+
+        <input class="form-control" type="hidden" th:field="*{activityList}"/>
+        <span> th:if="${#fields.hasErrors('activityList')}"
+          th:errors="*{activityList}"></span><br/></span>
+
+        <input class="form-control" type="hidden" th:field="*{stage}"/>
+        <span> th:if="${#fields.hasErrors('stage')}"
+          th:errors="*{stage}"></span><br/></span>
+
+        <input type="submit" value="Submit"/>
+        </form>
+
+    </div>
+
+</th:block>
+
+
+<th:block th:fragment="action-get-view">
+    <th:block th:replace="::message">DISPLAY ACTIVITIES</th:block>
+    <h2 class="display-4">Activity Information</h2><br/>
+    <span th:text="${jediEntity.isoStartTime}">8:00am</span>
+    <span th:text="${jediEntity.isoEndTime}">6:00pm</span>
+    <span th:text="${jediEntity.payRate}">$20.00 per hour</span>
+    <span th:text="${jediEntity.payCode}">Holiday Time</span>
+
+    <a th:href="@{/activity/update/{id}(id=${jediEntity.id})}">Edit</a>
+    <a th:href="@{/activity/delete/{id}(id=${jediEntity.id})}">Delete</a>
+
+
+</th:block>
+
+<th:block th:fragment="action-get-list">
+    <h2 class="display-4">Employee Directory</h2>
+    <ul>
+        <th:block th:each="jediEntity : ${jediEntityCollection}">
+            <li><a th:href="@{/activity/view/{id}(id=${jediEntity.id})}">
+                <span th:text="${jediEntity.isoStartTime}">8:00am</span>
+                <span th:text="${jediEntity.isoEndtime}">6:00pm</span>
+                <span th:text="${jediEntity.payRate}">$20.00 per hour</span>
+                <span th:text="${jediEntity.payCode}">Holiday Time</span>
+            </a>
+            </li>
+        </th:block>
+    </ul>
+</th:block>
+
+</body>
+</html>
