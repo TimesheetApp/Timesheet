@@ -14,7 +14,7 @@ https://ionicons.com/ -->
             Ts</a>
         <a th:replace="::nav-link(
             label='Timesheet',
-            href='javascript: document.getElementById(\'Menu\').activateMenu(document.getElementById(\'DepartmentsMenu\'));',
+            href='javascript: document.getElementById(\'Menu\').activateMenu(document.getElementById(\'TimesheetsMenu\'));',
             icon='list_alt',
             theme='filled',
             class='')">link</a>
@@ -72,7 +72,7 @@ https://ionicons.com/ -->
 
 
     </nav>
-    <nav th:fragment="DepartmentsMenu" id="DepartmentsMenu" class="nav inactive">
+    <nav th:fragment="TimesheetsMenu" id="TimesheetsMenu" class="nav inactive">
         <a th:replace="::nav-link(
             label='Back',
             href='javascript: document.getElementById(\'Menu\').activateMenu(document.getElementById(\'MainMenu\'));',
@@ -85,13 +85,14 @@ https://ionicons.com/ -->
             icon='list_alt',
             theme='filled',
             class='active')">link</a>
-        <a th:replace="::nav-link(
-            label='Search',
-            href='/timesheet/search',
-            icon='search',
-            theme='filled',
-            class='')">link</a>
-        <th:block sec:authorize="hasAuthority('ADMIN')">
+        <th:block sec:authorize="isAuthenticated()">
+            <a th:replace="::nav-link(
+                label='Search',
+                href='/timesheet/search',
+                icon='search',
+                theme='filled',
+                class='')">link</a>
+
             <a th:replace="::nav-link(
                 label='Add',
                 href='/timesheet/create',

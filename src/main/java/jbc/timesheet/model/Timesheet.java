@@ -18,7 +18,13 @@ public class Timesheet {
 
     private LocalDate startDate;
 
+    @Transient
+    private String isoStartDate;
+
     private LocalDate endDate;
+
+    @Transient
+    private String isoEndDate;
 
     private LocalDate creationDate;
 
@@ -73,27 +79,41 @@ public class Timesheet {
         return startDate;
     }
 
-    @Transient
-    public String getISOStartDate() {
-        return startDate.format(DateTimeFormatter.ISO_DATE_TIME);
-    }
+
 
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
+        this.isoStartDate = startDate.format(DateTimeFormatter.ISO_DATE);
+    }
+
+    @Transient
+    public String getIsoStartDate() {
+        return startDate.format(DateTimeFormatter.ISO_DATE);
+    }
+
+    public void setIsoStartDate(String isoStartDate) {
+        this.isoStartDate = isoStartDate;
+        startDate = LocalDate.parse(isoStartDate, DateTimeFormatter.ISO_DATE);
     }
 
     public LocalDate getEndDate() {
         return endDate;
     }
-
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+        this.isoEndDate = endDate.format(DateTimeFormatter.ISO_DATE);
+    }
     @Transient
-    public String getISOEndDate() {
+    public String getIsoEndDate() {
         return endDate.format(DateTimeFormatter.ISO_DATE_TIME);
     }
 
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
+    public void setIsoEndDate(String isoEndDate) {
+        this.isoEndDate = isoEndDate;
+        endDate = LocalDate.parse(isoEndDate, DateTimeFormatter.ISO_DATE);
     }
+
+
 
     public LocalDate getCreationDate() {
         return creationDate;

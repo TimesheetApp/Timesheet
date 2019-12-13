@@ -10,6 +10,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
@@ -52,6 +53,27 @@ public class MyUserDetail implements UserDetails {
 
 
     public MyUserDetail() {
+        this.authorities = new ArrayList<Authority>();
+        this.accountNonExpired = true;
+        this.accountNonLocked = true;
+        this.credentialsNonExpired = true;
+        this.enabled = true;
+    }
+
+    public MyUserDetail(String username) {
+        this.username = username;
+        setPasswordRaw("password");
+        this.authorities = new ArrayList<Authority>();
+        this.accountNonExpired = true;
+        this.accountNonLocked = true;
+        this.credentialsNonExpired = true;
+        this.enabled = true;
+    }
+
+    public MyUserDetail(String username, String passwordRaw) {
+        this.username = username;
+        setPasswordRaw(passwordRaw);
+        this.authorities = new ArrayList<Authority>();
         this.accountNonExpired = true;
         this.accountNonLocked = true;
         this.credentialsNonExpired = true;
