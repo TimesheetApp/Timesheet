@@ -1,15 +1,13 @@
 package jbc.timesheet.controller.iface;
 
-import jbc.timesheet.configuration.ApplicationProperties;
 import jbc.timesheet.controller.util.ActionType;
 import jbc.timesheet.controller.util.JediModelAttributes;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpMethod;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.validation.Valid;
@@ -25,7 +23,10 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
 
     ID getId(ENTITY entity);
 
-    Iterable<ENTITY> searchEntity(String... query);
+    default Iterable<ENTITY> searchEntity(MultiValueMap<String, String> parameters) {
+        return getRepository().findAll();
+    };
+
 
     @GetMapping(value = {"/","{id}"})
     default String index(@PathVariable("id") ID id, Model model) {
@@ -131,12 +132,13 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
     }
 
     @GetMapping("/search")
-    default String getSearch(Model model, @PathVariable("q") Optional<String> query){
+    default String getSearch(Model model, @RequestParam MultiValueMap<String, String> parameters){
+
         Iterable<ENTITY> jediEntityCollection;
-        if (query.isPresent()) {
-            jediEntityCollection = searchEntity(query.get());
-        } else {
+        if (parameters.isEmpty()) {
             jediEntityCollection = getRepository().findAll();
+        } else {
+            jediEntityCollection = searchEntity(parameters);
         }
 
 

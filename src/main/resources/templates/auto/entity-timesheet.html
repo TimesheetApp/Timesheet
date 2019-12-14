@@ -25,6 +25,13 @@ action handler for method 'post' of ActionType 'create'
 
 
 ---------------------------------------------------------------------->
+<th:block th:fragment="message">
+    <div class="alert alert-danger" th:if="${param.jediError}" th:text="${param.jediError}">Unknown Error!</div>
+    <div class="alert alert-success" th:if="${param.jediSuccess}" th:text="${param.jediSuccess}">Unknown Success
+        Message!
+    </div>
+    <div class="alert alert-info" th:if="${param.jediInfo}" th:text="${param.jediInfo}">Unknown Info Message!</div>
+</th:block>
 
 <th:block th:fragment="action-get-create">
     <th:block th:replace="::action-any-create-update">
@@ -124,8 +131,27 @@ action handler for method 'post' of ActionType 'create'
     <span th:text="${jediEntity.startDate}">11/12/19</span>
     <span th:text="${jediEntity.endDate}">11/16/19</span>
 
-    <a th:href="@{/timesheet/update/{id}(id=${jediEntity.id})}">Edit</a>
-    <a th:href="@{/timesheet/delete/{id}(id=${jediEntity.id})}">Delete</a>
+
+    <th:block th:switch="${jediEntity.stage}">
+        <span th:case="${T(jbc.timesheet.model.Stage).EDITING}" >
+            <span class="badge badge-warning">Editing</span>
+            <a th:href="@{/timesheet/delete/{id}(id=${jediEntity.id})}">Delete</a>
+            <a th:href="@{/timesheet/update/{id}/stage(id=${jediEntity.id},updateTo=${T(jbc.timesheet.model.Stage).PENDING})}">
+                Submit For Review</a>
+            <a th:href="@{/timesheet/update/{id}(id=${jediEntity.id})}">Edit</a>
+
+        </span>
+        <span th:case="${T(jbc.timesheet.model.Stage).PENDING}" ><span class="badge badge-primary">Pending Review</span></span>
+        <span th:case="${T(jbc.timesheet.model.Stage).APPROVED}" ><span class="badge badge-success">Approved</span>/span>
+        <span th:case="${T(jbc.timesheet.model.Stage).REJECTED}" >
+            <span class="badge badge-danger">Rejected</span>
+            <a th:href="@{/timesheet/delete/{id}(id=${jediEntity.id})}">Delete</a>
+            <a th:href="@{/timesheet/update/{id}(id=${jediEntity.id})}">Edit</a>
+        </span>
+        <span th:case="*" class="badge badge-secondary" th:text="${jediEntity.stage}">Unknown</span>
+    </th:block>
+
+
 
 
 </th:block>
@@ -135,9 +161,19 @@ action handler for method 'post' of ActionType 'create'
     <ul>
         <th:block th:each="jediEntity : ${jediEntityCollection}">
             <li><a th:href="@{/timesheet/view/{id}(id=${jediEntity.id})}">
-                <span th:text="${jediEntity.isoStartDate}">John</span>
-                <span th:text="${jediEntity.isoEndDate}">Doe</span>
+                Timesheet '<span th:text="${jediEntity.employee.firstName}">xxx</span>
+                <span th:text="${jediEntity.employee.lastName}">xxx</span>'
+                (<span th:text="${jediEntity.isoStartDate}">xxx</span>
+                to
+                <span th:text="${jediEntity.isoEndDate}">xxx</span>)
             </a>
+                <th:block th:switch="${jediEntity.stage}">
+                    <span th:case="${T(jbc.timesheet.model.Stage).EDITING}" class="badge badge-warning">Editing</span>
+                    <span th:case="${T(jbc.timesheet.model.Stage).PENDING}" class="badge badge-primary">Pending Review</span>
+                    <span th:case="${T(jbc.timesheet.model.Stage).APPROVED}" class="badge badge-success">Approved</span>
+                    <span th:case="${T(jbc.timesheet.model.Stage).REJECTED}" class="badge badge-danger">Rejected</span>
+                    <span th:case="*" class="badge badge-secondary" th:text="${jediEntity.stage}">Unknown</span>
+                </th:block>
             </li>
         </th:block>
     </ul>

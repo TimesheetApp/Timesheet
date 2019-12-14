@@ -35,9 +35,6 @@ public class ActivityController implements JediController<ActivityRepository, Ac
         return activity.getId();
     }
 
-    @Override
-    public Iterable<Activity> searchEntity(String... query) {
-        return activityRepository.findAll();
-    }
+
 }
 

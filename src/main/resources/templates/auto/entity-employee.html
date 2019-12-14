@@ -148,17 +148,20 @@
 
 <th:block th:fragment="action-get-view">
     <th:block th:replace="::message">DISPLAY MESSAGES</th:block>
-    <h2 class="display-4">Employee Information</h2><br/>
-    <span th:text="${jediEntity.firstName}">John</span>
-    <span th:text="${jediEntity.lastName}">Doe</span>
+    <h2 class="display-4">Employee Information</h2><br/><br>
+    <p>Name: <span th:text="${jediEntity.firstName}">John</span>
+    <span th:text="${jediEntity.lastName}">Doe</span></p>
+    <p>Address:<br>
     <span th:text="${jediEntity.address.street}">123 JBC Street</span>
     <span th:text="${jediEntity.address.street2}">APT 112</span>
     <span th:text="${jediEntity.address.city}">NYC</span>
     <span th:text="${jediEntity.address.state}">NY</span>
-    <span th:text="${jediEntity.address.zip}">23454</span>
+    <span th:text="${jediEntity.address.zip}">23454</span></p>
 
-    <a th:href="@{/employee/update/{id}(id=${jediEntity.id})}">Edit</a>
-    <a th:href="@{/employee/delete/{id}(id=${jediEntity.id})}">Delete</a>
+<br>
+    <a role="button" class="btn btn-outline-danger" th:href="@{/employee/delete/{id}(id=${jediEntity.id})}">Delete</a>
+    <a role="button" class="btn btn-outline-primary" th:href="@{/employee/update/{id}(id=${jediEntity.id})}">Edit</a>
+
 
 
 </th:block>
@@ -167,14 +170,10 @@
     <h2 class="display-4">Employee Directory</h2>
     <ul>
         <th:block th:each="jediEntity : ${jediEntityCollection}">
-            <li><a th:href="@{/employee/view/{id}(id=${jediEntity.id})}">
+            <li><a th:href="@{/employee/retrieve/{id}(id=${jediEntity.id})}">
                 <span th:text="${jediEntity.firstName}">John</span>
                 <span th:text="${jediEntity.lastName}">Doe</span>
-                <span th:text="${jediEntity.address.street}">123 JBC Street</span>
-                <span th:text="${jediEntity.address.street2}">APT 112</span>
-                <span th:text="${jediEntity.address.city}">NYC</span>
-                <span th:text="${jediEntity.address.state}">NY</span>
-                <span th:text="${jediEntity.address.zip}">23454</span>
+                (<span th:text="${jediEntity.username}">username@example.com</span>)
             </a>
             </li>
         </th:block>

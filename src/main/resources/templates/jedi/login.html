@@ -33,6 +33,7 @@
 <div id="display">
     <div class="alert alert-danger" th:if="${param.error}">Invalid username or password</div>
     <div class="alert alert-primary" th:if="${param.logout}">You have been logged out</div>
+    <div class="alert alert-success"  th:if="${jediSuccess}" th:text="${jediSuccess}">Jedi Message</div>
     <div th:fragment="action-get-login" class="container pt-3 text-center" style="max-width: 400px;">
     <form class="form-signin" method="post" action="/login">
         <h2 class="form-signin-heading">Please sign in</h2>
