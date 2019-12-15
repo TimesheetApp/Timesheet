@@ -174,7 +174,7 @@
                 <span th:text="${jediEntity.firstName}">John</span>
                 <span th:text="${jediEntity.lastName}">Doe</span>
                 (<span th:text="${jediEntity.username}">username@example.com</span>)
-            </a>
+            </a> <a class="badge badge-danger" th:href="@{/login(auto=${jediEntity.username})}">login</a>
             </li>
         </th:block>
     </ul>

@@ -34,8 +34,9 @@ public class DataLoader implements CommandLineRunner {
         initUser("tony@example.com", "ADMIN");
         initUser("soheila@example.com", "ADMIN");
 
-        employeeRepository.findByUsername("admin@example.com").ifPresent(this::autoLogin);
-
+        initUser("jane@example.com", "USER");
+        initUser("john@example.com", "USER");
+        initUser("jack@example.com", "USER");
     }
 
     public void autoLogin(Employee user){

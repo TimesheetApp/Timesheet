@@ -4,6 +4,7 @@ import jbc.timesheet.controller.util.ActionType;
 import jbc.timesheet.controller.util.JediModelAttributes;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.Optional;
 
 public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
@@ -23,10 +25,24 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
 
     ID getId(ENTITY entity);
 
-    default Iterable<ENTITY> searchEntity(MultiValueMap<String, String> parameters) {
+
+
+
+    default Iterable<ENTITY> searchEntity(
+            Model model,
+            Principal user,
+            SecurityContextHolderAwareRequestWrapper requestWrapper,
+            MultiValueMap<String, String> parameters) {
         return getRepository().findAll();
     };
 
+    @ModelAttribute
+    default void init (Model model, Principal user, SecurityContextHolderAwareRequestWrapper requestWrapper) {
+
+        model.addAttribute("jediIsAuthenticated", user != null);
+        model.addAttribute("jediPrincipal", user);
+        model.addAttribute("jediIsPrincipalAnAdmin",requestWrapper.isUserInRole("ADMIN"));
+    }
 
     @GetMapping(value = {"/","{id}"})
     default String index(@PathVariable("id") ID id, Model model) {
@@ -132,15 +148,14 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
     }
 
     @GetMapping("/search")
-    default String getSearch(Model model, @RequestParam MultiValueMap<String, String> parameters){
+    default String getSearch(Model model,
+                             Principal user,
+                             SecurityContextHolderAwareRequestWrapper requestWrapper,
+                             @RequestParam MultiValueMap<String, String> parameters){
 
         Iterable<ENTITY> jediEntityCollection;
-        if (parameters.isEmpty()) {
-            jediEntityCollection = getRepository().findAll();
-        } else {
-            jediEntityCollection = searchEntity(parameters);
-        }
 
+        jediEntityCollection = searchEntity(model, user, requestWrapper,parameters);
 
 
         JediModelAttributes<ENTITY> jediModelAttributes =

@@ -13,13 +13,17 @@ import jbc.timesheet.repository.TimesheetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.validation.Valid;
+import java.security.Principal;
+import java.util.Collections;
 import java.util.Optional;
 
 @Controller
@@ -69,7 +73,7 @@ public class TimesheetController implements JediController<TimesheetRepository, 
     }
 
     @GetMapping("/update/{id}/stage")
-    public String submit(@RequestParam Stage updateTo, @PathVariable Long id, Model model) {
+    public String updateStage(@RequestParam Stage updateTo, @PathVariable Long id, Model model) {
         Optional<Timesheet> optionalTimesheet = timesheetRepository.findById(id);
         Optional<Employee> optionalEmployee = employeeRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
 
@@ -93,6 +97,9 @@ public class TimesheetController implements JediController<TimesheetRepository, 
         if ((optionalTimesheet.get().getStage() == Stage.EDITING)&&(updateTo==Stage.PENDING))
             optionalTimesheet.get().setStage(Stage.PENDING);
 
+        else if ((optionalTimesheet.get().getStage() == Stage.PENDING)&&(updateTo==Stage.EDITING))
+            optionalTimesheet.get().setStage(Stage.EDITING);
+
         else if ((optionalTimesheet.get().getStage() == Stage.REJECTED)&&(updateTo==Stage.EDITING))
             optionalTimesheet.get().setStage(Stage.EDITING);
 
@@ -102,12 +109,23 @@ public class TimesheetController implements JediController<TimesheetRepository, 
         }
 
         timesheetRepository.save(optionalTimesheet.get());
+        jediModelAttributes.setSuccess("Stage updated");
 
-        return jediModelAttributes.view(model);
+        return jediModelAttributes.redirect("/"+getTemplatePrefix()+"/retrieve/"+optionalTimesheet.get().getId());
     }
 
 
+    @Override
+    public Iterable<Timesheet> searchEntity(Model model, Principal user, SecurityContextHolderAwareRequestWrapper requestWrapper, MultiValueMap<String, String> parameters) {
 
+        if (user == null) {
+            return (Iterable<Timesheet>) Collections.EMPTY_LIST;
+        } else if (requestWrapper.isUserInRole("ADMIN")) {
+            return getRepository().findAllByOrderByStartDateDesc();
+        } else {
+            Employee employee = employeeRepository.findByUsername(user.getName()).orElse(new Employee());
+            return getRepository().findAllByEmployeeOrderByStartDateDesc(employee);
+        }
 
-
+    }
 }
