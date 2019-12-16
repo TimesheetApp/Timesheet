@@ -105,15 +105,33 @@
 
 </th:block>
 
-<th:block th:fragment="action-get-list (jediEntityCollection)">
+<th:block th:fragment="action-get-list (jediEntityCollection)" class="form-control">
     <!--/*@thymesVar id="jediEntity" type="jbc.timesheet.model.Timesheet"*/-->
     <!--/*@thymesVar id="jediEntityCollection" type="java.util.ArrayList<jbc.timesheet.model.Activity>"*/-->
     <div class="border rounded border-secondary m-2 p-2">
         <p><strong>Activities</strong></p>
-        <a th:href="@{/activity/create/in-timesheet/{timesheetId}(timesheetId = ${jediEntity.id})}">Add new activity</a>
-        <ul>
+        <button name="button2"><a th:href="@{/activity/create/in-timesheet/{timesheetId}(timesheetId = ${jediEntity.id})}">Add New Activity</a></button>
+
+
+
+
+
+            <table class="table custom">
+                <thead class="thead-dark">
+                <tr class="custom">
+                    <th scope="col">Start Time</th>
+                    <th scope="col">End Time</th>
+                    <th scope="col">Pay Rate</th>
+                    <th scope="col">Pay Code</th>
+                    <th scope="col">Pay</th>
+
+                </tr>
+                </thead>
+            </table>
             <th:block th:each="jediEntity : ${jediEntityCollection}">
                 <!--/*@thymesVar id="jediEntity" type="jbc.timesheet.model.Activity"*/-->
+                <ul>
+
                 <li><a th:href="@{/activity/retrieve/{id}(id=${jediEntity.id})}">
                     <span th:text="${jediEntity.isoStartTime}">8:00am</span>
                     <span th:text="${jediEntity.isoEndTime}">6:00pm</span> -
@@ -125,8 +143,15 @@
 
                 </a>
                 </li>
-            </th:block>
+
+
+
         </ul>
+
+
+            </th:block>
+
+
     </div>
 </th:block>
 
