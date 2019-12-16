@@ -166,6 +166,7 @@ public class Timesheet {
         this.stage = stage;
     }
 
+    @Transient
     public double getPay() {
         BigDecimal sumPay = BigDecimal.ZERO;
         for (Activity eachActivity : getActivityList()) {
@@ -175,6 +176,7 @@ public class Timesheet {
         return sumPay.doubleValue();
     }
 
+    @Transient
     public double getHours() {
         BigDecimal sumHours = BigDecimal.ZERO;
         for (Activity eachActivity : getActivityList()) {
