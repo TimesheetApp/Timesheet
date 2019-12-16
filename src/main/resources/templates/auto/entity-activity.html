@@ -92,16 +92,17 @@
 
 
 <th:block th:fragment="action-get-view">
+    <!--/*@thymesVar id="jediEntity" type="jbc.timesheet.model.Activity"*/-->
     <th:block th:replace="::message">DISPLAY ACTIVITIES</th:block>
     <h2 class="display-4">Activity Information</h2><br/>
     <span th:text="${jediEntity.isoStartTime}">8:00am</span>
     <span th:text="${jediEntity.isoEndTime}">6:00pm</span>
     $<span th:text="${jediEntity.payRate}">$20.00 per hour</span>
     <span th:text="${jediEntity.payCode.label}"></span>
-
-    <a th:href="@{/activity/update/{id}(id=${jediEntity.id})}">Edit</a>
-    <a th:href="@{/activity/delete/{id}(id=${jediEntity.id})}">Delete</a>
-
+    <th:block th:if="${ jediEntity.timesheet.stage == T(jbc.timesheet.model.Stage).EDITING }">
+        <a th:href="@{/activity/update/{id}(id=${jediEntity.id})}">Edit</a>
+        <a th:href="@{/activity/delete/{id}(id=${jediEntity.id})}">Delete</a>
+    </th:block>
 
 </th:block>
 
@@ -110,11 +111,15 @@
     <!--/*@thymesVar id="jediEntityCollection" type="java.util.ArrayList<jbc.timesheet.model.Activity>"*/-->
     <div class="border rounded border-secondary m-2 p-2">
         <p><strong>Activities</strong></p>
-        <a th:href="@{/activity/create/in-timesheet/{timesheetId}(timesheetId = ${jediEntity.id})}">Add new activity</a>
+        <a class="btn btn-secondary mb-2"
+           th:if="${ jediEntity.stage == T(jbc.timesheet.model.Stage).EDITING }"
+           th:href="@{/activity/create/in-timesheet/{timesheetId}(timesheetId = ${jediEntity.id})}">Add New Activity</a>
         <ul>
             <th:block th:each="jediEntity : ${jediEntityCollection}">
                 <!--/*@thymesVar id="jediEntity" type="jbc.timesheet.model.Activity"*/-->
-                <li><a th:href="@{/activity/retrieve/{id}(id=${jediEntity.id})}">
+<!--                TODO: Add check logic if Principal is the owner of this Activity (Timesheet)-->
+                <li th:if="${ jediEntity.timesheet.stage == T(jbc.timesheet.model.Stage).EDITING }"><a
+                        th:href="@{/activity/retrieve/{id}(id=${jediEntity.id})}">
                     <span th:text="${jediEntity.isoStartTime}">8:00am</span>
                     <span th:text="${jediEntity.isoEndTime}">6:00pm</span> -
                     <span th:text="${#numbers.formatDecimal(jediEntity.hours,2,2)}">12.00</span>
@@ -124,6 +129,18 @@
                     = <span th:text="${#numbers.formatCurrency(jediEntity.pay)}">20.00</span>
 
                 </a>
+                </li>
+                <li th:unless="${ jediEntity.timesheet.stage == T(jbc.timesheet.model.Stage).EDITING }">
+                    <div>
+                    <span th:text="${jediEntity.isoStartTime}">8:00am</span>
+                    <span th:text="${jediEntity.isoEndTime}">6:00pm</span> -
+                    <span th:text="${#numbers.formatDecimal(jediEntity.hours,2,2)}">12.00</span>
+                    <span th:text="${jediEntity.payCode.label}">Holiday Time</span> Hours
+                    <span th:text="${#numbers.formatCurrency(jediEntity.payRate)}">20.00</span>
+                    x <span th:text="${jediEntity.payCode.rateFactor}">1.0</span> /hr
+                    = <span th:text="${#numbers.formatCurrency(jediEntity.pay)}">20.00</span>
+
+                </div>
                 </li>
             </th:block>
         </ul>

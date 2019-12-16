@@ -5,10 +5,8 @@ package jbc.timesheet.controller;
 import jbc.timesheet.controller.iface.JediController;
 import jbc.timesheet.controller.util.ActionType;
 import jbc.timesheet.controller.util.JediModelAttributes;
-import jbc.timesheet.model.Authority;
-import jbc.timesheet.model.Employee;
-import jbc.timesheet.model.Stage;
-import jbc.timesheet.model.Timesheet;
+import jbc.timesheet.model.*;
+import jbc.timesheet.repository.ActivityRepository;
 import jbc.timesheet.repository.AuthorityRepository;
 import jbc.timesheet.repository.EmployeeRepository;
 import jbc.timesheet.repository.TimesheetRepository;
@@ -25,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.net.ssl.HttpsURLConnection;
 import javax.validation.Valid;
 import java.security.Principal;
+import java.sql.Time;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -34,6 +33,9 @@ public class TimesheetController implements JediController<TimesheetRepository, 
 
     @Autowired
     TimesheetRepository timesheetRepository;
+
+    @Autowired
+    ActivityRepository activityRepository;
 
     @Autowired
     EmployeeRepository employeeRepository;
@@ -61,6 +63,19 @@ public class TimesheetController implements JediController<TimesheetRepository, 
         return timesheet.getId();
     }
 
+    @Override
+    public void preDelete(Long id) {
+        Optional<Timesheet> optionalTimesheet = timesheetRepository.findById(id);
+        if (optionalTimesheet.isPresent()) {
+            Timesheet timesheet = optionalTimesheet.get();
+
+            if (timesheet.getActivityList() != null)
+                timesheet.getActivityList().clear();
+
+            timesheetRepository.save(timesheet);
+
+        }
+    }
 
     @Override
     public void preProcess(Timesheet timesheet, BindingResult result) {

@@ -57,6 +57,11 @@ action handler for method 'post' of ActionType 'create'
     </th:block>
 </th:block>
 
+
+<th:block th:fragment="action-get-default">
+    <th:block th:replace="::message">DISPLAY MESSAGES</th:block>
+</th:block>
+
 <th:block th:fragment="action-any-create-update">
     <div class="container">
         <!--    ///check object name!! and action link
@@ -135,6 +140,9 @@ action handler for method 'post' of ActionType 'create'
     to
         <span th:text="${jediEntity.isoEndDate}">xxx</span> </p>
 
+    <p>Gross Pay
+        <span th:text="${#numbers.formatCurrency(jediEntity.pay)}">pay</span>
+    </p>
     <p>
         Status
     <th:block th:switch="${jediEntity.stage}">

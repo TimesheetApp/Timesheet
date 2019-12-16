@@ -10,6 +10,7 @@ import jbc.timesheet.repository.TimesheetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,9 +65,13 @@ public class ActivityController implements JediController<ActivityRepository, Ac
 
         Activity activity = newEntity();
 
+
         activity.setTimesheet(optionalTimesheet.get());
         activity.setStartTime(LocalDateTime.of(optionalTimesheet.get().getStartDate(), LocalTime.of(8,0)));
         activity.setEndTime(LocalDateTime.of(optionalTimesheet.get().getEndDate(), LocalTime.of(17,0)));
+
+
+
         JediModelAttributes<Activity> jediModelAttributes =
                 new JediModelAttributes<>(HttpsURLConnection.HTTP_OK,activity, ActionType.CREATE, HttpMethod.GET);
 
@@ -78,7 +83,26 @@ public class ActivityController implements JediController<ActivityRepository, Ac
 
     @Override
     public void preProcess(Activity activity, BindingResult result) {
-        activity.getTimesheet().getActivityList().add(activity);
+
+    }
+
+    @Override
+    public void preDelete(Long id) {
+        Activity activity = activityRepository.findById(id).orElse(new Activity());
+
+        if (activity.getTimesheet().getActivityList().contains(activity))
+            activity.getTimesheet().getActivityList().remove(activity);
+    }
+
+    @Override
+    public String postProcess(Activity activity, JediModelAttributes jediModelAttributes) {
+        Optional<Timesheet> optionalTimesheet = timesheetRepository.findById(activity.getTimesheet().getId());
+
+        if (optionalTimesheet.isPresent() && !optionalTimesheet.get().getActivityList().contains(activity)) {
+                optionalTimesheet.get().getActivityList().add(activity);
+                timesheetRepository.save(optionalTimesheet.get());
+        }
+        return "/timesheet/retrieve/"+activity.getTimesheet().getId();
     }
 }
 

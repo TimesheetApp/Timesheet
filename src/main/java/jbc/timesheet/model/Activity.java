@@ -31,7 +31,7 @@ public class Activity {
     private PayCode payCode;
 
     @ManyToOne (
-            cascade = CascadeType.ALL,
+            cascade = {CascadeType.PERSIST, CascadeType.REFRESH},
             fetch = FetchType.EAGER
     )
     private Timesheet timesheet;
