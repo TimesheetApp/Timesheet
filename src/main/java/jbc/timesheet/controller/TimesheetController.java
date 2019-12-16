@@ -7,6 +7,7 @@ import jbc.timesheet.controller.util.ActionType;
 import jbc.timesheet.controller.util.JediModelAttributes;
 import jbc.timesheet.model.*;
 import jbc.timesheet.repository.*;
+import jbc.timesheet.service.email.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,6 +44,9 @@ public class TimesheetController implements JediController<TimesheetRepository, 
 
     @Autowired
     LogRepository logRepository;
+
+    @Autowired
+    EmailService emailService;
 
     @Override
     public Timesheet newEntity() {
@@ -151,6 +155,11 @@ public class TimesheetController implements JediController<TimesheetRepository, 
         if ((optionalTimesheet.get().getStage() == Stage.EDITING)&&(updateTo==Stage.PENDING)) {
             optionalTimesheet.get().setStage(Stage.PENDING);
             logRepository.save(Log.newLog(Action.TIMESHEET_SUBMIT, getCurrentUsername(), optionalTimesheet.get().getId(),"Stage Change"));
+            emailService.sendOne(
+                    "jindanupajit@gmail.com",
+                    "Your Timesheet was submitted for review",
+                    "Hi "+getCurrentUsername()+",\nYour timesheet was submitted for review");
+
         }
         else if ((optionalTimesheet.get().getStage() == Stage.PENDING)&&(updateTo==Stage.EDITING)) {
             optionalTimesheet.get().setStage(Stage.EDITING);
