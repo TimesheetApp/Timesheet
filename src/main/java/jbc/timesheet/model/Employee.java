@@ -123,4 +123,17 @@ public class Employee extends MyUserDetail {
     public void setPhone(String phone) {
         this.phone = phone;
     }
+
+    @Transient
+    public boolean hasAuthority(String authority) {
+        if (getAuthorities() == null)
+            return false;
+
+        for (Authority eachAuthority : getAuthorities()) {
+            if (eachAuthority.getAuthority().equals(authority))
+                return true;
+        }
+
+        return false;
+    }
 }

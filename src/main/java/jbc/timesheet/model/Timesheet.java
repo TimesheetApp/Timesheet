@@ -1,6 +1,9 @@
 package jbc.timesheet.model;
 
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
@@ -11,6 +14,7 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.TemporalField;
 import java.time.temporal.WeekFields;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -21,7 +25,11 @@ public class Timesheet {
     @GeneratedValue(generator = "Timesheet")
     private long id;
 
-    @OneToOne
+    @OneToOne(
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
+            orphanRemoval = false
+    )
     private Employee employee;
 
     private LocalDate startDate;
@@ -41,10 +49,12 @@ public class Timesheet {
             fetch = FetchType.EAGER,
             orphanRemoval = false
     )
-    private List<Activity> activityList;
+    private List<Activity> activityList = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private Stage stage = Stage.EDITING;
+
+
 
     public Timesheet() {
 

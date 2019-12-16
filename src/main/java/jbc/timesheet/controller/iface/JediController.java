@@ -1,9 +1,12 @@
 package jbc.timesheet.controller.iface;
 
+import jbc.timesheet.configuration.Jedi;
 import jbc.timesheet.controller.util.ActionType;
 import jbc.timesheet.controller.util.JediModelAttributes;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -26,6 +29,7 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
     ID getId(ENTITY entity);
 
 
+    Jedi jedi = new Jedi();
 
 
     default Iterable<ENTITY> searchEntity(
@@ -41,7 +45,6 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
 
         model.addAttribute("jediIsAuthenticated", user != null);
         model.addAttribute("jediPrincipal", user);
-        model.addAttribute("jediIsPrincipalAnAdmin",requestWrapper.isUserInRole("ADMIN"));
     }
 
     @GetMapping(value = {"/","{id}"})
@@ -116,7 +119,7 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
             jediModelAttributes.setError("Object not found");
             return jediModelAttributes.redirect("/"+getTemplatePrefix()+"/"+id);
         }
-
+        //TODO: Security
         preRetrieve(optionalEntity.get());
 
          return jediModelAttributes.view(model);
@@ -132,6 +135,7 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
 
         if (getRepository().existsById(id)) {
 
+            //TODO: Security
             preDelete(id);
 
             getRepository().deleteById(id);

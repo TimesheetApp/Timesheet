@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
     <meta charset="UTF-8">
     <title>Timesheet</title>
@@ -106,11 +106,7 @@ action handler for method 'post' of ActionType 'create'
             <span th:errors="${jediEntity.isoEndDate}"
                   th:if="${#fields.hasErrors('isoEndDate')}"></span><br/>
 
-            <input th:field="*{activityList}" type="hidden"/>
 
-            <input th:field="*{stage}" type="hidden"/>
-
-            <input th:field="*{employee}" type="hidden"/>
 
 
             <input type="submit" value="Submit"/>
@@ -139,44 +135,87 @@ action handler for method 'post' of ActionType 'create'
     to
         <span th:text="${jediEntity.isoEndDate}">xxx</span> </p>
 
-    <p th:if="${jediIsAuthenticated and jediEntity.employee.username == jediPrincipal.name }">
+    <p>
         Status
     <th:block th:switch="${jediEntity.stage}">
         <span th:case="${T(jbc.timesheet.model.Stage).EDITING}" >
             <span class="badge badge-warning">Editing</span><br><br>
+        </span>
+        <span th:case="${T(jbc.timesheet.model.Stage).PENDING}" >
+            <span class="badge badge-primary">Pending Review</span><br><br>
+        </span>
+        <span th:case="${T(jbc.timesheet.model.Stage).APPROVED}" >
+            <span class="badge badge-success">Approved</span><br><br>
+        </span>
+        <span th:case="${T(jbc.timesheet.model.Stage).REJECTED}" >
+            <span class="badge badge-danger">Rejected</span><br><br>
+        </span>
+        <span th:case="*" class="badge badge-secondary" th:text="${jediEntity.stage}">Unknown</span>
+    </th:block>
+    </p>
+
+    <th:block th:replace="auto/entity-activity :: action-get-list (jediEntityCollection = ${jediEntity.activityList})">
+..
+    </th:block>
+
+
+    <p th:if="${jediIsAuthenticated and jediEntity.employee.username == jediPrincipal.name }">
+        <th:block th:switch="${jediEntity.stage}">
+        <span th:case="${T(jbc.timesheet.model.Stage).EDITING}" >
             <a class="btn btn-outline-danger" th:href="@{/timesheet/delete/{id}(id=${jediEntity.id})}">Delete</a>
             <a class="btn btn-primary"  th:href="@{/timesheet/update/{id}/stage(id=${jediEntity.id},updateTo=${T(jbc.timesheet.model.Stage).PENDING})}">
                 Submit For Review</a>
             <a class="btn btn-secondary"  th:href="@{/timesheet/update/{id}(id=${jediEntity.id})}">Edit</a>
         </span>
-        <span th:case="${T(jbc.timesheet.model.Stage).PENDING}" >
-            <span class="badge badge-primary">Pending Review</span><br><br>
+            <span th:case="${T(jbc.timesheet.model.Stage).PENDING}" >
             <a class="btn btn-danger" th:href="@{/timesheet/update/{id}/stage(id=${jediEntity.id},updateTo=${T(jbc.timesheet.model.Stage).EDITING})}">
                 Cancel Submission</a>
         </span>
-        <span th:case="${T(jbc.timesheet.model.Stage).APPROVED}" ><span class="badge badge-success">Approved</span></span>
-        <span th:case="${T(jbc.timesheet.model.Stage).REJECTED}" >
-            <span class="badge badge-danger">Rejected</span><br><br>
+            <span th:case="${T(jbc.timesheet.model.Stage).APPROVED}" ></span>
+            <span th:case="${T(jbc.timesheet.model.Stage).REJECTED}" >
             <a class="btn btn-outline-danger" th:href="@{/timesheet/delete/{id}(id=${jediEntity.id})}">Delete</a>
             <a class="btn btn-secondary" th:href="@{/timesheet/update/{id}/stage(id=${jediEntity.id},updateTo=${T(jbc.timesheet.model.Stage).EDITING})}">
                 Cancel Submission</a>
         </span>
         <span th:case="*" class="badge badge-secondary" th:text="${jediEntity.stage}">Unknown</span>
 
-    </th:block>
+        </th:block>
     </p>
+    <p sec:authorize="hasAuthority('ADMIN')">
+        <th:block th:switch="${jediEntity.stage}">
+        <span th:case="${T(jbc.timesheet.model.Stage).PENDING}" >
+            <a class="btn btn-outline-danger" th:href="@{/timesheet/update/{id}/stage(id=${jediEntity.id},updateTo=${T(jbc.timesheet.model.Stage).REJECTED})}">
+                Reject</a>
+            <a class="btn btn-outline-success" th:href="@{/timesheet/update/{id}/stage(id=${jediEntity.id},updateTo=${T(jbc.timesheet.model.Stage).APPROVED})}">
+                Approve</a>
+        </span>
+        <span th:case="${T(jbc.timesheet.model.Stage).APPROVED}" >
+            <a class="btn btn-warning" th:href="@{/timesheet/update/{id}/stage(id=${jediEntity.id},updateTo=${T(jbc.timesheet.model.Stage).PENDING})}">
+                Revise Decision</a>
+        </span>
+        <span th:case="${T(jbc.timesheet.model.Stage).REJECTED}" >
+            <a class="btn btn-warning" th:href="@{/timesheet/update/{id}/stage(id=${jediEntity.id},updateTo=${T(jbc.timesheet.model.Stage).PENDING})}">
+                Revise Decision</a>
+        </span>
 
+
+        </th:block>
+    </p>
 
 
 </th:block>
 
 <th:block th:fragment="action-get-list">
     <h2 class="display-4">Timesheet Directory</h2>
-    <ul>
+    <div sec:authorize="!isAuthenticated()">
+        You are not logged in
+    </div>
+    <ul sec:authorize="isAuthenticated()">
         <th:block th:each="jediEntity : ${jediEntityCollection}">
-            <li><a th:href="@{/timesheet/view/{id}(id=${jediEntity.id})}">
-                Timesheet '<span th:text="${jediEntity.employee.firstName}">xxx</span>
-                <span th:text="${jediEntity.employee.lastName}">xxx</span>'
+            <li><a th:href="@{/timesheet/retrieve/{id}(id=${jediEntity.id})}">
+                Timesheet '<span th:text="${jediEntity.employee.lastName}">xxx</span>,
+                <span th:text="${jediEntity.employee.firstName}">xxx</span>'
+
                 (<span th:text="${jediEntity.isoStartDate}">xxx</span>
                 to
                 <span th:text="${jediEntity.isoEndDate}">xxx</span>)

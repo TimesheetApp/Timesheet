@@ -5,9 +5,11 @@ package jbc.timesheet.controller;
 import jbc.timesheet.controller.iface.JediController;
 import jbc.timesheet.controller.util.ActionType;
 import jbc.timesheet.controller.util.JediModelAttributes;
+import jbc.timesheet.model.Authority;
 import jbc.timesheet.model.Employee;
 import jbc.timesheet.model.Stage;
 import jbc.timesheet.model.Timesheet;
+import jbc.timesheet.repository.AuthorityRepository;
 import jbc.timesheet.repository.EmployeeRepository;
 import jbc.timesheet.repository.TimesheetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,9 @@ public class TimesheetController implements JediController<TimesheetRepository, 
     @Autowired
     EmployeeRepository employeeRepository;
 
+    @Autowired
+    AuthorityRepository authorityRepository;
+
     @Override
     public Timesheet newEntity() {
         return new Timesheet();
@@ -59,17 +64,30 @@ public class TimesheetController implements JediController<TimesheetRepository, 
 
     @Override
     public void preProcess(Timesheet timesheet, BindingResult result) {
-        if (timesheet.getId() != 0)
-            return;
 
         Optional<Employee> optionalEmployee = employeeRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+
 
         if (!optionalEmployee.isPresent()) {
             result.rejectValue("employee", "error.employee", "could not load current logged in user credential");
             return;
         }
 
-        timesheet.setEmployee(optionalEmployee.get());
+        if (timesheet.getId() == 0) {
+            timesheet.setEmployee(optionalEmployee.get());
+            return;
+        }
+        Optional<Timesheet> optionalTimesheet = timesheetRepository.findById(timesheet.getId());
+        if (!optionalTimesheet.isPresent()) {
+            result.rejectValue("id", "error.id", "Timesheet not found id=" + timesheet.getId());
+            return;
+        }
+        System.out.printf("Current Timesheet owner = %d\n", optionalTimesheet.get().getEmployee().getId());
+
+        // Pull value from database not from client!
+        timesheet.setEmployee(optionalTimesheet.get().getEmployee());
+        timesheet.setStage(optionalTimesheet.get().getStage());
+        timesheet.setActivityList(optionalTimesheet.get().getActivityList());
     }
 
     @GetMapping("/update/{id}/stage")
@@ -88,12 +106,17 @@ public class TimesheetController implements JediController<TimesheetRepository, 
             return jediModelAttributes.view(model);
         }
 
-        if (!optionalTimesheet.get().getEmployee().getUsername().equals(optionalEmployee.get().getUsername()) ) {
-            jediModelAttributes.setError("Cannot change stage because current user is not the owner of timesheet");
+        boolean isPrincipalAnAdmin = optionalEmployee.get().hasAuthority("ADMIN");
+
+        if (!optionalTimesheet.get().getEmployee().getUsername().equals(optionalEmployee.get().getUsername())
+            && !isPrincipalAnAdmin
+        ) {
+            jediModelAttributes.setError("Cannot change stage because current user is not the owner of timesheet, or not an 'ADMIN'");
             return jediModelAttributes.view(model);
         }
 
 
+        // TODO: Log
         if ((optionalTimesheet.get().getStage() == Stage.EDITING)&&(updateTo==Stage.PENDING))
             optionalTimesheet.get().setStage(Stage.PENDING);
 
@@ -103,8 +126,21 @@ public class TimesheetController implements JediController<TimesheetRepository, 
         else if ((optionalTimesheet.get().getStage() == Stage.REJECTED)&&(updateTo==Stage.EDITING))
             optionalTimesheet.get().setStage(Stage.EDITING);
 
+        else if ((isPrincipalAnAdmin) && (optionalTimesheet.get().getStage() == Stage.PENDING)&&(updateTo==Stage.APPROVED))
+            optionalTimesheet.get().setStage(Stage.APPROVED);
+
+        else if ((isPrincipalAnAdmin) && (optionalTimesheet.get().getStage() == Stage.PENDING)&&(updateTo==Stage.REJECTED))
+            optionalTimesheet.get().setStage(Stage.REJECTED);
+
+        else if ((isPrincipalAnAdmin) && (optionalTimesheet.get().getStage() == Stage.APPROVED)&&(updateTo==Stage.PENDING))
+            optionalTimesheet.get().setStage(Stage.PENDING);
+
+        else if ((isPrincipalAnAdmin) && (optionalTimesheet.get().getStage() == Stage.REJECTED)&&(updateTo==Stage.PENDING))
+            optionalTimesheet.get().setStage(Stage.PENDING);
+
         else {
-            jediModelAttributes.setError("Cannot change stage because invalid new stage was requested");
+            jediModelAttributes.setError("unauthorized stage change, maybe you are not login");
+
             return jediModelAttributes.view(model);
         }
 
@@ -118,12 +154,16 @@ public class TimesheetController implements JediController<TimesheetRepository, 
     @Override
     public Iterable<Timesheet> searchEntity(Model model, Principal user, SecurityContextHolderAwareRequestWrapper requestWrapper, MultiValueMap<String, String> parameters) {
 
-        if (user == null) {
+        if (user == null)
             return (Iterable<Timesheet>) Collections.EMPTY_LIST;
-        } else if (requestWrapper.isUserInRole("ADMIN")) {
-            return getRepository().findAllByOrderByStartDateDesc();
+
+        Employee employee = employeeRepository.findByUsername(user.getName()).orElse(new Employee());
+
+        Authority admin = authorityRepository.findByAuthority("ADMIN").orElse(new Authority());
+
+        if (employee.getAuthorities().contains(admin)) {
+            return getRepository().findAllByOrderByEmployeeLastNameAscEmployeeFirstNameAscStartDateDesc();
         } else {
-            Employee employee = employeeRepository.findByUsername(user.getName()).orElse(new Employee());
             return getRepository().findAllByEmployeeOrderByStartDateDesc(employee);
         }
 

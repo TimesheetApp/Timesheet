@@ -20,7 +20,7 @@ public enum PayCode {
 
     @Override
     public String toString() {
-        return label;
+        return String.format("%s (x%.2f)",label, rateFactor);
     }
 
     public double getRateFactor() {
@@ -30,5 +30,9 @@ public enum PayCode {
     public String getLabel() {
         return label;
     }
+
+    public String getName() { return name();}
+
+    public String getString() {return toString();}
 
 }
