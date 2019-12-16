@@ -15,14 +15,26 @@ public class Log {
     @Enumerated(EnumType.STRING)
     private Action action;
 
-    @OneToOne
-    private Employee employee;
+    private String username;
 
-    private String target;
+    private Long timesheetId;
 
-    private LocalDateTime localDateTime;
+    private LocalDateTime timestamp;
 
     private String message;
+
+    public Log() {
+    }
+
+    public static Log newLog(Action action, String username, Long timesheetId, String message) {
+        Log log = new Log();
+        log.action = action;
+        log.username = username;
+        log.timesheetId = timesheetId;
+        log.timestamp = LocalDateTime.now();
+        log.message = message;
+        return log;
+    }
 
     public long getId() {
         return id;
@@ -40,28 +52,28 @@ public class Log {
         this.action = action;
     }
 
-    public Employee getEmployee() {
-        return employee;
+    public String getUsername() {
+        return username;
     }
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getTarget() {
-        return target;
+    public Long getTimesheetId() {
+        return timesheetId;
     }
 
-    public void setTarget(String target) {
-        this.target = target;
+    public void setTimesheetId(Long timesheetId) {
+        this.timesheetId = timesheetId;
     }
 
-    public LocalDateTime getLocalDateTime() {
-        return localDateTime;
+    public LocalDateTime getTimestamp() {
+        return timestamp;
     }
 
-    public void setLocalDateTime(LocalDateTime localDateTime) {
-        this.localDateTime = localDateTime;
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getMessage() {
@@ -71,4 +83,5 @@ public class Log {
     public void setMessage(String message) {
         this.message = message;
     }
+
 }

@@ -6,10 +6,7 @@ import jbc.timesheet.controller.iface.JediController;
 import jbc.timesheet.controller.util.ActionType;
 import jbc.timesheet.controller.util.JediModelAttributes;
 import jbc.timesheet.model.*;
-import jbc.timesheet.repository.ActivityRepository;
-import jbc.timesheet.repository.AuthorityRepository;
-import jbc.timesheet.repository.EmployeeRepository;
-import jbc.timesheet.repository.TimesheetRepository;
+import jbc.timesheet.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,12 +15,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.net.ssl.HttpsURLConnection;
-import javax.validation.Valid;
 import java.security.Principal;
-import java.sql.Time;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -42,6 +40,9 @@ public class TimesheetController implements JediController<TimesheetRepository, 
 
     @Autowired
     AuthorityRepository authorityRepository;
+
+    @Autowired
+    LogRepository logRepository;
 
     @Override
     public Timesheet newEntity() {
@@ -75,7 +76,10 @@ public class TimesheetController implements JediController<TimesheetRepository, 
             timesheetRepository.save(timesheet);
 
         }
+        logRepository.save(Log.newLog(Action.TIMESHEET_DELETE, getCurrentUsername(), optionalTimesheet.get().getId(),"Delete Timesheet("+optionalTimesheet.get().getId()+")"));
     }
+
+
 
     @Override
     public void preProcess(Timesheet timesheet, BindingResult result) {
@@ -90,6 +94,7 @@ public class TimesheetController implements JediController<TimesheetRepository, 
 
         if (timesheet.getId() == 0) {
             timesheet.setEmployee(optionalEmployee.get());
+
             return;
         }
         Optional<Timesheet> optionalTimesheet = timesheetRepository.findById(timesheet.getId());
@@ -103,6 +108,17 @@ public class TimesheetController implements JediController<TimesheetRepository, 
         timesheet.setEmployee(optionalTimesheet.get().getEmployee());
         timesheet.setStage(optionalTimesheet.get().getStage());
         timesheet.setActivityList(optionalTimesheet.get().getActivityList());
+
+    }
+
+    @Override
+    public void postCreate(Timesheet timesheet) {
+        logRepository.save(Log.newLog(Action.TIMESHEET_CREATE, getCurrentUsername(), timesheet.getId(),"Stage Change"));
+    }
+
+    @Override
+    public void postUpdate(Timesheet timesheet) {
+        logRepository.save(Log.newLog(Action.TIMESHEET_UPDATE, getCurrentUsername(), timesheet.getId(),"Stage Change"));
     }
 
     @GetMapping("/update/{id}/stage")
@@ -132,27 +148,35 @@ public class TimesheetController implements JediController<TimesheetRepository, 
 
 
         // TODO: Log
-        if ((optionalTimesheet.get().getStage() == Stage.EDITING)&&(updateTo==Stage.PENDING))
+        if ((optionalTimesheet.get().getStage() == Stage.EDITING)&&(updateTo==Stage.PENDING)) {
             optionalTimesheet.get().setStage(Stage.PENDING);
-
-        else if ((optionalTimesheet.get().getStage() == Stage.PENDING)&&(updateTo==Stage.EDITING))
+            logRepository.save(Log.newLog(Action.TIMESHEET_SUBMIT, getCurrentUsername(), optionalTimesheet.get().getId(),"Stage Change"));
+        }
+        else if ((optionalTimesheet.get().getStage() == Stage.PENDING)&&(updateTo==Stage.EDITING)) {
             optionalTimesheet.get().setStage(Stage.EDITING);
-
-        else if ((optionalTimesheet.get().getStage() == Stage.REJECTED)&&(updateTo==Stage.EDITING))
+            logRepository.save(Log.newLog(Action.TIMESHEET_CANCEL_SUBMIT, getCurrentUsername(), optionalTimesheet.get().getId(),"Stage Change"));
+        }
+        else if ((optionalTimesheet.get().getStage() == Stage.REJECTED)&&(updateTo==Stage.EDITING)) {
             optionalTimesheet.get().setStage(Stage.EDITING);
+            logRepository.save(Log.newLog(Action.TIMESHEET_CANCEL_SUBMIT, getCurrentUsername(), optionalTimesheet.get().getId(),"Stage Change"));
+        }
 
-        else if ((isPrincipalAnAdmin) && (optionalTimesheet.get().getStage() == Stage.PENDING)&&(updateTo==Stage.APPROVED))
+        else if ((isPrincipalAnAdmin) && (optionalTimesheet.get().getStage() == Stage.PENDING)&&(updateTo==Stage.APPROVED)) {
             optionalTimesheet.get().setStage(Stage.APPROVED);
-
-        else if ((isPrincipalAnAdmin) && (optionalTimesheet.get().getStage() == Stage.PENDING)&&(updateTo==Stage.REJECTED))
+            logRepository.save(Log.newLog(Action.TIMESHEET_APPROVE, getCurrentUsername(), optionalTimesheet.get().getId(),"Stage Change"));
+        }
+        else if ((isPrincipalAnAdmin) && (optionalTimesheet.get().getStage() == Stage.PENDING)&&(updateTo==Stage.REJECTED)) {
             optionalTimesheet.get().setStage(Stage.REJECTED);
-
-        else if ((isPrincipalAnAdmin) && (optionalTimesheet.get().getStage() == Stage.APPROVED)&&(updateTo==Stage.PENDING))
+            logRepository.save(Log.newLog(Action.TIMESHEET_REJECT, getCurrentUsername(), optionalTimesheet.get().getId(),"Stage Change"));
+        }
+        else if ((isPrincipalAnAdmin) && (optionalTimesheet.get().getStage() == Stage.APPROVED)&&(updateTo==Stage.PENDING)) {
             optionalTimesheet.get().setStage(Stage.PENDING);
-
-        else if ((isPrincipalAnAdmin) && (optionalTimesheet.get().getStage() == Stage.REJECTED)&&(updateTo==Stage.PENDING))
+            logRepository.save(Log.newLog(Action.TIMESHEET_REVISE_DECISION, getCurrentUsername(), optionalTimesheet.get().getId(),"Stage Change"));
+        }
+        else if ((isPrincipalAnAdmin) && (optionalTimesheet.get().getStage() == Stage.REJECTED)&&(updateTo==Stage.PENDING)) {
             optionalTimesheet.get().setStage(Stage.PENDING);
-
+            logRepository.save(Log.newLog(Action.TIMESHEET_REVISE_DECISION, getCurrentUsername(), optionalTimesheet.get().getId(), "Stage Change"));
+        }
         else {
             jediModelAttributes.setError("unauthorized stage change, maybe you are not login");
 

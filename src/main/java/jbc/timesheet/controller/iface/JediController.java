@@ -3,6 +3,7 @@ package jbc.timesheet.controller.iface;
 import jbc.timesheet.configuration.Jedi;
 import jbc.timesheet.controller.util.ActionType;
 import jbc.timesheet.controller.util.JediModelAttributes;
+import jbc.timesheet.model.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpMethod;
@@ -31,6 +32,10 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
 
     Jedi jedi = new Jedi();
 
+    default String getCurrentUsername() {
+
+       return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
 
     default Iterable<ENTITY> searchEntity(
             Model model,
@@ -177,6 +182,15 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
 
     }
 
+    default void preSave(ENTITY entity) {
+
+    }
+    default void postCreate(ENTITY entity) {
+
+    }
+    default void postUpdate(ENTITY entity) {
+
+    }
     default String postProcess(ENTITY entity, JediModelAttributes jediModelAttributes) {
         return "/"+getTemplatePrefix()+"/retrieve/"+getId(entity);
     }
@@ -184,17 +198,30 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
     @PostMapping(value={"/process","/update", "/create"})
     default String doProcess(Model model, @Valid @ModelAttribute("jediEntity") ENTITY entity, BindingResult result){
         preProcess(entity, result);
+        ActionType action = getId(entity).toString().equals("0")?ActionType.CREATE:ActionType.UPDATE;
+
+
         if(result.hasErrors()){
             System.out.println("Form Error:\n"+result.toString());
             JediModelAttributes<ENTITY> jediModelAttributes =
-                    new JediModelAttributes<ENTITY>(HttpsURLConnection.HTTP_OK, entity, getId(entity).equals(0)?ActionType.CREATE:ActionType.UPDATE, HttpMethod.POST);
+                    new JediModelAttributes<ENTITY>(HttpsURLConnection.HTTP_OK, entity, action, HttpMethod.POST);
             jediModelAttributes.setAction("/"+getTemplatePrefix()+(getId(entity).equals(0)?"/create":"/update"));
             jediModelAttributes.setError("Jedi reject your form because your form could not pass the validations. \n\n"+result.toString());
             jediModelAttributes.setMethod(HttpMethod.POST);
             return jediModelAttributes.view(model);
         }
 
+
+        preSave(entity);
         getRepository().save(entity);
+
+        switch (action) {
+            case CREATE: postCreate(entity);
+            break;
+            case UPDATE: postUpdate(entity);
+            break;
+        }
+
 
         JediModelAttributes<ENTITY> jediModelAttributes =
                 new JediModelAttributes<ENTITY>(HttpsURLConnection.HTTP_OK,entity, getId(entity).equals(0)?ActionType.CREATE:ActionType.UPDATE, HttpMethod.POST);
