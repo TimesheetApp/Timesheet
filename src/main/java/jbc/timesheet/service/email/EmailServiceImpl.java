@@ -1,11 +1,19 @@
 package jbc.timesheet.service.email;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
 @Service
 public class EmailServiceImpl implements EmailServiceIface {
+    @Autowired
+    Environment environment;
+
+    private String smtpHost;
+
+
 
     /* TODO: Update the sender email in EmailServiceIface */
 
@@ -41,5 +49,9 @@ public class EmailServiceImpl implements EmailServiceIface {
 
         /* TODO: remove the word "TODO:" when done */
 
+    }
+
+    public boolean sendOne(String recipients, String subject, String message) {
+        return false;
     }
 }
