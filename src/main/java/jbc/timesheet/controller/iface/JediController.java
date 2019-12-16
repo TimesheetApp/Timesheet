@@ -55,7 +55,7 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
     }
 
     @GetMapping("/create")
-    default String getCreate(Model model) {
+    default String doCreate(Model model) {
 
         JediModelAttributes<ENTITY> jediModelAttributes =
 //                the first argument is status code, which will be assigned to ${jediCode}
@@ -82,7 +82,7 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
     }
 
     @GetMapping("/update/{id}")
-    default String getUpdateId(@PathVariable("id") ID id, Model model){
+    default String doUpdateById(@PathVariable("id") ID id, Model model){
         Optional<ENTITY> optionalEntity = getRepository().findById(id);
 
         @SuppressWarnings("unchecked")
@@ -108,7 +108,7 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
     }
 
     @GetMapping("/retrieve/{id}")
-    default String getRetrieveId(@PathVariable("id") ID id, Model model){
+    default String doRetrieveById(@PathVariable("id") ID id, Model model){
         @SuppressWarnings("unchecked")
         Optional<ENTITY> optionalEntity = getRepository().findById(id);
         JediModelAttributes<ENTITY> jediModelAttributes =
@@ -128,8 +128,12 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
 
     }
 
+    default String postDelete(ID id, JediModelAttributes jediModelAttributes) {
+        return "/"+getTemplatePrefix()+"/"+id;
+    }
+
     @GetMapping("/delete/{id}")
-    default String getDeleteId(Model model, @PathVariable("id") ID id){
+    default String doDeleteById(Model model, @PathVariable("id") ID id){
         JediModelAttributes<ENTITY> jediModelAttributes =
                 new JediModelAttributes<ENTITY>(HttpsURLConnection.HTTP_OK,newEntity(), ActionType.DELETE, HttpMethod.GET);
 
@@ -138,6 +142,7 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
             //TODO: Security
             preDelete(id);
 
+            System.out.printf("Deleting %s(%s)\n", getTemplatePrefix(), id.toString());
             getRepository().deleteById(id);
 
             jediModelAttributes.setSuccess("Object '"+id.toString()+"' deleted");
@@ -148,14 +153,14 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
         }
 
 
-        return jediModelAttributes.redirect("/"+getTemplatePrefix()+"/"+id);
+        return jediModelAttributes.redirect(postDelete(id, jediModelAttributes));
     }
 
     @GetMapping("/search")
-    default String getSearch(Model model,
-                             Principal user,
-                             SecurityContextHolderAwareRequestWrapper requestWrapper,
-                             @RequestParam MultiValueMap<String, String> parameters){
+    default String doSearch(Model model,
+                            Principal user,
+                            SecurityContextHolderAwareRequestWrapper requestWrapper,
+                            @RequestParam MultiValueMap<String, String> parameters){
 
         Iterable<ENTITY> jediEntityCollection;
 
@@ -172,8 +177,12 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
 
     }
 
+    default String postProcess(ENTITY entity, JediModelAttributes jediModelAttributes) {
+        return "/"+getTemplatePrefix()+"/retrieve/"+getId(entity);
+    }
+
     @PostMapping(value={"/process","/update", "/create"})
-    default String postProcess(Model model, @Valid @ModelAttribute("jediEntity") ENTITY entity, BindingResult result){
+    default String doProcess(Model model, @Valid @ModelAttribute("jediEntity") ENTITY entity, BindingResult result){
         preProcess(entity, result);
         if(result.hasErrors()){
             System.out.println("Form Error:\n"+result.toString());
@@ -189,6 +198,6 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
 
         JediModelAttributes<ENTITY> jediModelAttributes =
                 new JediModelAttributes<ENTITY>(HttpsURLConnection.HTTP_OK,entity, getId(entity).equals(0)?ActionType.CREATE:ActionType.UPDATE, HttpMethod.POST);
-        return jediModelAttributes.redirect("/"+getTemplatePrefix()+"/retrieve/"+getId(entity));
+        return jediModelAttributes.redirect(postProcess(entity,jediModelAttributes));
     }
 }

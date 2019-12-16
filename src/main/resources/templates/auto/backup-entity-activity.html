@@ -111,7 +111,7 @@
     <!--/*@thymesVar id="jediEntityCollection" type="java.util.ArrayList<jbc.timesheet.model.Activity>"*/-->
     <div class="border rounded border-secondary m-2 p-2">
         <p><strong>Activities</strong></p>
-
+<<<<<<< HEAD
         <button name="button2"><a th:href="@{/activity/create/in-timesheet/{timesheetId}(timesheetId = ${jediEntity.id})}">Add New Activity</a></button>
 
 
@@ -135,9 +135,9 @@
                 <ul>
 
                 <li><a th:href="@{/activity/retrieve/{id}(id=${jediEntity.id})}">
-
+=======
         <a class="btn btn-secondary mb-2"
-           th:if="${ jediEntity.timesheet.stage == T(jbc.timesheet.model.Stage).EDITING }"
+           th:if="${ jediEntity.stage == T(jbc.timesheet.model.Stage).EDITING }"
            th:href="@{/activity/create/in-timesheet/{timesheetId}(timesheetId = ${jediEntity.id})}">Add New Activity</a>
         <ul>
             <th:block th:each="jediEntity : ${jediEntityCollection}">
@@ -145,6 +145,7 @@
 <!--                TODO: Add check logic if Principal is the owner of this Activity (Timesheet)-->
                 <li th:if="${ jediEntity.timesheet.stage == T(jbc.timesheet.model.Stage).EDITING }"><a
                         th:href="@{/activity/retrieve/{id}(id=${jediEntity.id})}">
+>>>>>>> 471768680735a02db28c4664dd9cb3825e13f912
                     <span th:text="${jediEntity.isoStartTime}">8:00am</span>
                     <span th:text="${jediEntity.isoEndTime}">6:00pm</span> -
                     <span th:text="${#numbers.formatDecimal(jediEntity.hours,2,2)}">12.00</span>
@@ -155,10 +156,11 @@
 
                 </a>
                 </li>
+<<<<<<< HEAD
 
 
 
-
+=======
                 <li th:unless="${ jediEntity.timesheet.stage == T(jbc.timesheet.model.Stage).EDITING }">
                     <div>
                     <span th:text="${jediEntity.isoStartTime}">8:00am</span>
@@ -172,6 +174,7 @@
                 </div>
                 </li>
             </th:block>
+>>>>>>> 471768680735a02db28c4664dd9cb3825e13f912
         </ul>
 
 

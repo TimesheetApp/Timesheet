@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface TimesheetRepository extends CrudRepository<Timesheet, Long> {
     Iterable<Timesheet> findAllByOrderByEmployeeLastNameAscEmployeeFirstNameAscStartDateDesc();
     Iterable<Timesheet> findAllByEmployeeOrderByStartDateDesc(Employee employee);
+
 }

@@ -26,7 +26,7 @@ public class Timesheet {
     private long id;
 
     @OneToOne(
-            cascade = CascadeType.ALL,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},
             fetch = FetchType.EAGER,
             orphanRemoval = false
     )
@@ -45,9 +45,10 @@ public class Timesheet {
     private LocalDate creationDate = LocalDate.now();
 
     @OneToMany (
-            cascade = CascadeType.ALL,
+            cascade = {CascadeType.PERSIST, CascadeType.REFRESH},
             fetch = FetchType.EAGER,
-            orphanRemoval = false
+            orphanRemoval = true,
+            mappedBy = "timesheet"
     )
     private List<Activity> activityList = new ArrayList<>();
 
@@ -165,6 +166,23 @@ public class Timesheet {
         this.stage = stage;
     }
 
+    public double getPay() {
+        BigDecimal sumPay = BigDecimal.ZERO;
+        for (Activity eachActivity : getActivityList()) {
+            sumPay = sumPay.add(BigDecimal.valueOf(eachActivity.getPay()));
+        }
+
+        return sumPay.doubleValue();
+    }
+
+    public double getHours() {
+        BigDecimal sumHours = BigDecimal.ZERO;
+        for (Activity eachActivity : getActivityList()) {
+            sumHours = sumHours.add(BigDecimal.valueOf(eachActivity.getHours()));
+        }
+
+        return sumHours.doubleValue();
+    }
     //    public Timesheet fromJson(String json) {
 //        //TODO: https://springframework.guru/processing-json-jackson/
 //        ObjectMapper objectMapper = new ObjectMapper();
