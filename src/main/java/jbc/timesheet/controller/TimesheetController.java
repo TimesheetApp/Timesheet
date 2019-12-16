@@ -125,8 +125,17 @@ public class TimesheetController implements JediController<TimesheetRepository, 
         logRepository.save(Log.newLog(Action.TIMESHEET_UPDATE, getCurrentUsername(), timesheet.getId(),"Stage Change"));
     }
 
+    @GetMapping("/update/stage")
+    public String updateStage(Model model,  @RequestParam Long id, @RequestParam String action,  @RequestParam String reason) {
+
+        if (action.equals("Approve"))
+            return updateStage(model,id, Stage.APPROVED, Optional.ofNullable(reason));
+        else
+            return updateStage(model,id, Stage.REJECTED, Optional.ofNullable(reason));
+    }
+
     @GetMapping("/update/{id}/stage")
-    public String updateStage(@RequestParam Stage updateTo, @PathVariable Long id, Model model) {
+    public String updateStage(Model model, @PathVariable Long id, @RequestParam Stage updateTo, @RequestParam Optional<String> reason ) {
         Optional<Timesheet> optionalTimesheet = timesheetRepository.findById(id);
         Optional<Employee> optionalEmployee = employeeRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
 
@@ -158,7 +167,7 @@ public class TimesheetController implements JediController<TimesheetRepository, 
             emailService.sendOne(
                     "jindanupajit@gmail.com",
                     "Your Timesheet was submitted for review",
-                    "Hi "+getCurrentUsername()+",\nYour timesheet was submitted for review");
+                    "Hi "+getCurrentUsername()+",\nYour timesheet was submitted for review.");
 
         }
         else if ((optionalTimesheet.get().getStage() == Stage.PENDING)&&(updateTo==Stage.EDITING)) {
@@ -173,10 +182,18 @@ public class TimesheetController implements JediController<TimesheetRepository, 
         else if ((isPrincipalAnAdmin) && (optionalTimesheet.get().getStage() == Stage.PENDING)&&(updateTo==Stage.APPROVED)) {
             optionalTimesheet.get().setStage(Stage.APPROVED);
             logRepository.save(Log.newLog(Action.TIMESHEET_APPROVE, getCurrentUsername(), optionalTimesheet.get().getId(),"Stage Change"));
+            emailService.sendOne(
+                    "jindanupajit@gmail.com",
+                    "Your Timesheet was approved",
+                    "Hi "+getCurrentUsername()+",\nYour timesheet was approved.\n\n"+reason.orElse(""));
         }
         else if ((isPrincipalAnAdmin) && (optionalTimesheet.get().getStage() == Stage.PENDING)&&(updateTo==Stage.REJECTED)) {
             optionalTimesheet.get().setStage(Stage.REJECTED);
             logRepository.save(Log.newLog(Action.TIMESHEET_REJECT, getCurrentUsername(), optionalTimesheet.get().getId(),"Stage Change"));
+            emailService.sendOne(
+                    "jindanupajit@gmail.com",
+                    "Your Timesheet was rejected",
+                    "Hi "+getCurrentUsername()+",\nYour timesheet was rejected.\n\n"+reason.orElse(""));
         }
         else if ((isPrincipalAnAdmin) && (optionalTimesheet.get().getStage() == Stage.APPROVED)&&(updateTo==Stage.PENDING)) {
             optionalTimesheet.get().setStage(Stage.PENDING);
