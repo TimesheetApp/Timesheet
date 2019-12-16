@@ -2,6 +2,8 @@ package jbc.timesheet.model;
 
 
 import jbc.timesheet.security.JediPasswordEncoder;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.NaturalId;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -22,7 +24,6 @@ public class MyUserDetail implements UserDetails {
     @GeneratedValue(generator = "MyUserDetail")
     private long id;
 
-    @NaturalId(mutable=true)
     @NotEmpty
     @NotNull
     @Size(min = 3, max=320, message="email too short or too long")
@@ -45,7 +46,7 @@ public class MyUserDetail implements UserDetails {
     private boolean enabled;
 
     @ManyToMany(
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
             // Owner
     )

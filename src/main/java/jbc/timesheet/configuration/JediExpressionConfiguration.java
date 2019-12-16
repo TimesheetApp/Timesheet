@@ -1,6 +1,8 @@
 package jbc.timesheet.configuration;
 
 import jbc.timesheet.controller.util.ActionType;
+import jbc.timesheet.repository.AuthorityRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.thymeleaf.context.IExpressionContext;
@@ -15,9 +17,13 @@ import java.util.Set;
 @Configuration
 public class JediExpressionConfiguration {
 
+
     @Bean
     public CustomExpressionObjectDialect customExpressionObjectDialect() {
-        return new CustomExpressionObjectDialect();
+        CustomExpressionObjectDialect customExpressionObjectDialect =
+                new CustomExpressionObjectDialect();
+
+        return customExpressionObjectDialect;
     }
 
 
@@ -37,6 +43,10 @@ public class JediExpressionConfiguration {
     }
 
     private static class CustomExpressionObjectFactory implements IExpressionObjectFactory {
+
+
+
+
 
         protected static final Set<String> ALL_EXPRESSION_OBJECT_NAMES =
                 Collections.unmodifiableSet(
@@ -61,7 +71,8 @@ public class JediExpressionConfiguration {
         @Override
         public Object buildObject(IExpressionContext context, String expressionObjectName) {
             if (Jedi.expressionObjectName.equals(expressionObjectName)) {
-                return new Jedi();
+                Jedi jedi = new Jedi();
+                return jedi;
             }
             return null;
         }

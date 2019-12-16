@@ -36,10 +36,6 @@ public class EmployeeController implements JediController<EmployeeRepository, Em
         return employee.getId();
     }
 
-    @Override
-    public Iterable<Employee> searchEntity(String... query) {
-        return employeeRepository.findAll();
-    }
 
     @Override
     public void preProcess(Employee employee, BindingResult result) {

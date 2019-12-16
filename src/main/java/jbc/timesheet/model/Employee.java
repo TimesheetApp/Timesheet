@@ -30,7 +30,7 @@ public class Employee extends MyUserDetail {
     @AttributeOverride(name="city", column=@Column(name="addressCity"))
     @AttributeOverride(name="state", column=@Column(name="addressState"))
     @AttributeOverride(name="zip", column=@Column(name="addressZip"))
-    private Address address;
+    private Address address = new Address();
 
     private String phone;
 
@@ -47,13 +47,19 @@ public class Employee extends MyUserDetail {
         this.phone = phone;
     }
 
+    public Employee(String username) {
+        super(username);
+
+        this.firstName = username.substring(0, 1).toUpperCase() + username.replaceAll("@.+", "").substring(1);;
+        this.lastName = "Auto-generated";
+        this.dob = LocalDate.now();
+    }
+
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(firstName).append(' ').append(lastName);
 
-        return sb.toString().trim();
+        return (firstName + ' ' + lastName).trim();
     }
 
     public String getFirstName() {
@@ -116,5 +122,18 @@ public class Employee extends MyUserDetail {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    @Transient
+    public boolean hasAuthority(String authority) {
+        if (getAuthorities() == null)
+            return false;
+
+        for (Authority eachAuthority : getAuthorities()) {
+            if (eachAuthority.getAuthority().equals(authority))
+                return true;
+        }
+
+        return false;
     }
 }

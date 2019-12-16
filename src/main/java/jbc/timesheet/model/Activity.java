@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 @Entity
@@ -14,9 +15,15 @@ public class Activity {
     @GeneratedValue(generator = "Activity")
     private long id;
 
-    private LocalDateTime start;
+    private LocalDateTime startTime;
 
-    private LocalDateTime end;
+    @Transient
+    private String isoStartTime;
+
+    private LocalDateTime endTime;
+
+    @Transient
+    private String isoEndTime;
 
     private double payRate;
 
@@ -27,7 +34,7 @@ public class Activity {
             cascade = CascadeType.ALL,
             fetch = FetchType.EAGER
     )
-    private Employee employee;
+    private Timesheet timesheet;
 
     public long getId() {
         return id;
@@ -37,20 +44,44 @@ public class Activity {
         this.id = id;
     }
 
-    public LocalDateTime getStart() {
-        return start;
+    public LocalDateTime getStartTime() {
+        return startTime;
     }
 
-    public void setStart(LocalDateTime start) {
-        this.start = start;
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+        this.isoStartTime = startTime.format(DateTimeFormatter.ISO_DATE_TIME);
     }
 
-    public LocalDateTime getEnd() {
-        return end;
+    public String getIsoStartTime() {
+        if (startTime == null)
+            return "";
+        return startTime.format(DateTimeFormatter.ISO_DATE_TIME);
     }
 
-    public void setEnd(LocalDateTime end) {
-        this.end = end;
+    public void setIsoStartTime(String isoStartTime) {
+
+        this.startTime  = LocalDateTime.parse(this.isoStartTime = isoStartTime, DateTimeFormatter.ISO_DATE_TIME);
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+                this.endTime = endTime;
+        this.isoEndTime = endTime.format(DateTimeFormatter.ISO_DATE_TIME);
+    }
+
+    public String getIsoEndTime() {
+        if (endTime == null)
+            return "";
+        return endTime.format(DateTimeFormatter.ISO_DATE_TIME);
+    }
+
+    public void setIsoEndTime(String isoEndTime) {
+
+        this.endTime = LocalDateTime.parse(this.isoEndTime = isoEndTime, DateTimeFormatter.ISO_DATE_TIME);;
     }
 
     public double getPayRate() {
@@ -69,12 +100,12 @@ public class Activity {
         this.payCode = payCode;
     }
 
-    public Employee getEmployee() {
-        return employee;
+    public Timesheet getTimesheet() {
+        return timesheet;
     }
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
+    public void setTimesheet(Timesheet timesheet) {
+        this.timesheet = timesheet;
     }
 
     @Transient
@@ -104,7 +135,7 @@ public class Activity {
         /**
          * Get time different in seconds
          */
-        BigDecimal seconds = BigDecimal.valueOf(start.until(end, ChronoUnit.SECONDS));
+        BigDecimal seconds = BigDecimal.valueOf(startTime.until(endTime, ChronoUnit.SECONDS));
 
         /**
          * To calculate hour from given seconds
@@ -115,4 +146,6 @@ public class Activity {
                     .doubleValue();
 
     }
+
+
 }

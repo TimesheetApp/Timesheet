@@ -1,18 +1,21 @@
 package jbc.timesheet.controller.iface;
 
-import jbc.timesheet.configuration.ApplicationProperties;
+import jbc.timesheet.configuration.Jedi;
 import jbc.timesheet.controller.util.ActionType;
 import jbc.timesheet.controller.util.JediModelAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-
 import javax.net.ssl.HttpsURLConnection;
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.Optional;
 
 public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
@@ -25,7 +28,24 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
 
     ID getId(ENTITY entity);
 
-    Iterable<ENTITY> searchEntity(String... query);
+
+    Jedi jedi = new Jedi();
+
+
+    default Iterable<ENTITY> searchEntity(
+            Model model,
+            Principal user,
+            SecurityContextHolderAwareRequestWrapper requestWrapper,
+            MultiValueMap<String, String> parameters) {
+        return getRepository().findAll();
+    };
+
+    @ModelAttribute
+    default void init (Model model, Principal user, SecurityContextHolderAwareRequestWrapper requestWrapper) {
+
+        model.addAttribute("jediIsAuthenticated", user != null);
+        model.addAttribute("jediPrincipal", user);
+    }
 
     @GetMapping(value = {"/","{id}"})
     default String index(@PathVariable("id") ID id, Model model) {
@@ -99,7 +119,7 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
             jediModelAttributes.setError("Object not found");
             return jediModelAttributes.redirect("/"+getTemplatePrefix()+"/"+id);
         }
-
+        //TODO: Security
         preRetrieve(optionalEntity.get());
 
          return jediModelAttributes.view(model);
@@ -115,6 +135,7 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
 
         if (getRepository().existsById(id)) {
 
+            //TODO: Security
             preDelete(id);
 
             getRepository().deleteById(id);
@@ -131,14 +152,14 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
     }
 
     @GetMapping("/search")
-    default String getSearch(Model model, @PathVariable("q") Optional<String> query){
-        Iterable<ENTITY> jediEntityCollection;
-        if (query.isPresent()) {
-            jediEntityCollection = searchEntity(query.get());
-        } else {
-            jediEntityCollection = getRepository().findAll();
-        }
+    default String getSearch(Model model,
+                             Principal user,
+                             SecurityContextHolderAwareRequestWrapper requestWrapper,
+                             @RequestParam MultiValueMap<String, String> parameters){
 
+        Iterable<ENTITY> jediEntityCollection;
+
+        jediEntityCollection = searchEntity(model, user, requestWrapper,parameters);
 
 
         JediModelAttributes<ENTITY> jediModelAttributes =

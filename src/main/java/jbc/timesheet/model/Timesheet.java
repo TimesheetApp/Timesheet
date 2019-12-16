@@ -1,11 +1,22 @@
 package jbc.timesheet.model;
 
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+
+import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Entity
 public class Timesheet {
@@ -14,6 +25,11 @@ public class Timesheet {
     @GeneratedValue(generator = "Timesheet")
     private long id;
 
+    @OneToOne(
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
+            orphanRemoval = false
+    )
     private Employee employee;
 
     private LocalDate startDate;
@@ -26,23 +42,33 @@ public class Timesheet {
     @Transient
     private String isoEndDate;
 
-    private LocalDate creationDate;
+    private LocalDate creationDate = LocalDate.now();
 
     @OneToMany (
             cascade = CascadeType.ALL,
             fetch = FetchType.EAGER,
             orphanRemoval = false
     )
-    private List<Activity> activityList;
+    private List<Activity> activityList = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    private Stage stage;
+    private Stage stage = Stage.EDITING;
+
+
 
     public Timesheet() {
+
+        LocalDate now = LocalDate.now();
+
+        // Get next Sunday
+        this.startDate = now.with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
+        this.endDate = startDate.plus(6,ChronoUnit.DAYS);
+
     }
 
 
     public Timesheet(Employee employee, LocalDate startDate, LocalDate endDate, List<Activity> activityList, Stage stage) {
+        this();
         this.employee = employee;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -105,7 +131,7 @@ public class Timesheet {
     }
     @Transient
     public String getIsoEndDate() {
-        return endDate.format(DateTimeFormatter.ISO_DATE_TIME);
+        return endDate.format(DateTimeFormatter.ISO_DATE);
     }
 
     public void setIsoEndDate(String isoEndDate) {
