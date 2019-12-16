@@ -192,6 +192,7 @@ action handler for method 'post' of ActionType 'create'
     <p sec:authorize="hasAuthority('ADMIN')">
         <th:block th:switch="${jediEntity.stage}">
         <span th:case="${T(jbc.timesheet.model.Stage).PENDING}" >
+            <input type="text" id="reason" name="reason"/>
             <a class="btn btn-outline-danger" th:href="@{/timesheet/update/{id}/stage(id=${jediEntity.id},updateTo=${T(jbc.timesheet.model.Stage).REJECTED})}">
                 Reject</a>
             <a class="btn btn-outline-success" th:href="@{/timesheet/update/{id}/stage(id=${jediEntity.id},updateTo=${T(jbc.timesheet.model.Stage).APPROVED})}">

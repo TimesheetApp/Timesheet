@@ -55,7 +55,7 @@
     <div class="container">
         <!--/*@thymesVar id="#jedi" type="jbc.timesheet.configuration.Jedi"*/-->
         <!--/*@thymesVar id="jediEntity" type="jbc.timesheet.model.Activity"*/-->
-        <form action="#" th:action="@{${jediActionNext}}" th:object="${jediEntity}" th:method="${jediMethodNext}"
+        <form action="#" th:action="@{${jediActionNext}}" th:object ="${jediEntity}" th:method="${jediMethodNext}"
         enctype="multipart/form-data" class="custom">
 
         <input type="hidden" th:field="*{id}" />
@@ -118,59 +118,39 @@
 
 
 
-            <table class="table custom">
-                <thead class="thead-dark">
-                <tr class="custom">
-                    <th scope="col">Start Time</th>
-                    <th scope="col">End Time</th>
-                    <th scope="col">Pay Rate</th>
-                    <th scope="col">Pay Code</th>
-                    <th scope="col">Pay</th>
+<!--            <table class="table custom">-->
+<!--                <thead class="thead-dark">-->
+<!--                <tr class="custom">-->
+<!--                    <th scope="col">Start Time</th>-->
+<!--                    <th scope="col">End Time</th>-->
+<!--                    <th scope="col">Pay Rate</th>-->
+<!--                    <th scope="col">Pay Code</th>-->
+<!--                    <th scope="col">Pay</th>-->
 
-                </tr>
-                </thead>
-            </table>
+<!--                </tr>-->
+<!--                </thead>-->
+<!--            </table>-->
             <th:block th:each="jediEntity : ${jediEntityCollection}">
                 <!--/*@thymesVar id="jediEntity" type="jbc.timesheet.model.Activity"*/-->
-                <ul>
 
-                <li><a th:href="@{/activity/retrieve/{id}(id=${jediEntity.id})}">
 
-        <a class="btn btn-secondary mb-2"
-           th:if="${ jediEntity.timesheet.stage == T(jbc.timesheet.model.Stage).EDITING }"
-           th:href="@{/activity/create/in-timesheet/{timesheetId}(timesheetId = ${jediEntity.id})}">Add New Activity</a>
+<!--        <a class="btn btn-secondary mb-2"-->
+<!--           th:if="${ jediEntity.timesheet.stage == T(jbc.timesheet.model.Stage).EDITING }"-->
+<!--           th:href="@{/activity/create/in-timesheet/{timesheetId}(timesheetId = ${jediEntity.id})}">Add New Activity</a>-->
         <ul>
             <th:block th:each="jediEntity : ${jediEntityCollection}">
                 <!--/*@thymesVar id="jediEntity" type="jbc.timesheet.model.Activity"*/-->
 <!--                TODO: Add check logic if Principal is the owner of this Activity (Timesheet)-->
-                <li th:if="${ jediEntity.timesheet.stage == T(jbc.timesheet.model.Stage).EDITING }"><a
-                        th:href="@{/activity/retrieve/{id}(id=${jediEntity.id})}">
-                    <span th:text="${jediEntity.isoStartTime}">8:00am</span>
-                    <span th:text="${jediEntity.isoEndTime}">6:00pm</span> -
-                    <span th:text="${#numbers.formatDecimal(jediEntity.hours,2,2)}">12.00</span>
-                    <span th:text="${jediEntity.payCode.label}">Holiday Time</span> Hours
-                    <span th:text="${#numbers.formatCurrency(jediEntity.payRate)}">20.00</span>
-                    x <span th:text="${jediEntity.payCode.rateFactor}">1.0</span> /hr
-                    = <span th:text="${#numbers.formatCurrency(jediEntity.pay)}">20.00</span>
+                <th:block th:if="${ jediEntity.timesheet.stage == T(jbc.timesheet.model.Stage).EDITING }">
+                    <a th:href="@{/activity/retrieve/{id}(id=${jediEntity.id})}">
+                        <th:block th:replace="::activity-line">...</th:block>
+                    </a>
+                </th:block>
+                <th:block th:unless="${ jediEntity.timesheet.stage == T(jbc.timesheet.model.Stage).EDITING }">
 
-                </a>
-                </li>
+                        <th:block th:replace="::activity-line">...</th:block>
 
-
-
-
-                <li th:unless="${ jediEntity.timesheet.stage == T(jbc.timesheet.model.Stage).EDITING }">
-                    <div>
-                    <span th:text="${jediEntity.isoStartTime}">8:00am</span>
-                    <span th:text="${jediEntity.isoEndTime}">6:00pm</span> -
-                    <span th:text="${#numbers.formatDecimal(jediEntity.hours,2,2)}">12.00</span>
-                    <span th:text="${jediEntity.payCode.label}">Holiday Time</span> Hours
-                    <span th:text="${#numbers.formatCurrency(jediEntity.payRate)}">20.00</span>
-                    x <span th:text="${jediEntity.payCode.rateFactor}">1.0</span> /hr
-                    = <span th:text="${#numbers.formatCurrency(jediEntity.pay)}">20.00</span>
-
-                </div>
-                </li>
+                </th:block>
             </th:block>
         </ul>
 
@@ -180,6 +160,19 @@
 
     </div>
 </th:block>
-
+<th:block th:fragment="activity-line">
+    <!--/*@thymesVar id="jediEntity" type="jbc.timesheet.model.Activity"*/-->
+    <ul>
+        <li>
+    <span th:text="${jediEntity.isoStartTime}">8:00am</span>
+    <span th:text="${jediEntity.isoEndTime}">6:00pm</span> -
+    <span th:text="${#numbers.formatDecimal(jediEntity.hours,2,2)}">12.00</span>
+    <span th:text="${jediEntity.payCode.label}">Holiday Time</span> Hours
+    <span th:text="${#numbers.formatCurrency(jediEntity.payRate)}">20.00</span>
+    x <span th:text="${jediEntity.payCode.rateFactor}">1.0</span> /hr
+    = <span th:text="${#numbers.formatCurrency(jediEntity.pay)}">20.00</span>
+        </li>
+    </ul>
+</th:block>
 </body>
 </html>
