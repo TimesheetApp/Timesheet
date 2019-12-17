@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns:th="http://www.thymeleaf.org">
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
@@ -55,35 +55,36 @@
     <div class="container">
         <!--/*@thymesVar id="#jedi" type="jbc.timesheet.configuration.Jedi"*/-->
         <!--/*@thymesVar id="jediEntity" type="jbc.timesheet.model.Activity"*/-->
-        <form action="#" th:action="@{${jediActionNext}}" th:object ="${jediEntity}" th:method="${jediMethodNext}"
-        enctype="multipart/form-data" class="custom">
+        <form action="#" th:action="@{${jediActionNext}}" th:object="${jediEntity}" th:method="${jediMethodNext}"
+              enctype="multipart/form-data" class="custom">
 
-        <input type="hidden" th:field="*{id}" />
-        <input type="hidden" th:field="*{timesheet}" />
-        <span th:if="${#fields.hasErrors('id')}"
-              th:errors="*{id}"></span>
+            <input type="hidden" th:field="*{id}"/>
+            <input type="hidden" th:field="*{timesheet}"/>
+            <span th:if="${#fields.hasErrors('id')}"
+                  th:errors="*{id}"></span>
 
-        Start Time :<input class="form-control" type="datetime-local" th:field="*{isoStartTime}"/>
-        <span th:if="${#fields.hasErrors('isoStartTime')}"
-              th:errors="*{isoStartTime}"></span><br/>
-        End Time :<input class="form-control" type="datetime-local" th:field="*{isoEndTime}"/>
-        <span th:if="${#fields.hasErrors('isoEndTime')}"
-              th:errors="*{isoEndTime}"></span><br/>
-        Pay Rate :<input class="form-control" type="number" th:field="*{payRate}"/>
-        <span th:if="${#fields.hasErrors('payRate')}"
-              th:errors="*{payRate}"></span><br/>
-        Pay Code :<select class="form-control" th:field="*{payCode}">
+            Start Time :<input class="form-control" type="datetime-local" th:field="*{isoStartTime}"/>
+            <span th:if="${#fields.hasErrors('isoStartTime')}"
+                  th:errors="*{isoStartTime}"></span><br/>
+            End Time :<input class="form-control" type="datetime-local" th:field="*{isoEndTime}"/>
+            <span th:if="${#fields.hasErrors('isoEndTime')}"
+                  th:errors="*{isoEndTime}"></span><br/>
+            Pay Rate :<input class="form-control" type="number" th:field="*{payRate}"/>
+            <span th:if="${#fields.hasErrors('payRate')}"
+                  th:errors="*{payRate}"></span><br/>
+            Pay Code :<select class="form-control" th:field="*{payCode}">
 
             <option th:each="paycode : ${T(jbc.timesheet.model.PayCode).values()}"
                     th:field="*{payCode}"
                     th:value="${paycode.name}"
-                    th:text="${paycode.string}">paycode</option>
+                    th:text="${paycode.string}">paycode
+            </option>
         </select>
-        <span th:if="${#fields.hasErrors('payCode')}"
-              th:errors="*{payCode}"></span><br/>
+            <span th:if="${#fields.hasErrors('payCode')}"
+                  th:errors="*{payCode}"></span><br/>
 
 
-        <input type="submit" value="Submit"/>
+            <input type="submit" value="Submit"/>
         </form>
 
     </div>
@@ -112,35 +113,33 @@
     <div class="border rounded border-secondary m-2 p-2">
         <p><strong>Activities</strong></p>
 
-        <button name="button2"><a th:href="@{/activity/create/in-timesheet/{timesheetId}(timesheetId = ${jediEntity.id})}">Add New Activity</a></button>
+        <button name="button2" sec:authorize="hasAuthority('ADMIN')" th:if="${jediIsAuthenticated and jediEntity.employee.username == jediPrincipal.name}"><a
+                th:href="@{/activity/create/in-timesheet/{timesheetId}(timesheetId = ${jediEntity.id})}">Add New
+            Activity</a></button>
 
 
+        <!--            <table class="table custom">-->
+        <!--                <thead class="thead-dark">-->
+        <!--                <tr class="custom">-->
+        <!--                    <th scope="col">Start Time</th>-->
+        <!--                    <th scope="col">End Time</th>-->
+        <!--                    <th scope="col">Pay Rate</th>-->
+        <!--                    <th scope="col">Pay Code</th>-->
+        <!--                    <th scope="col">Pay</th>-->
+
+        <!--                </tr>-->
+        <!--                </thead>-->
+        <!--            </table>-->
+        <!--/*@thymesVar id="jediEntity" type="jbc.timesheet.model.Activity"*/-->
 
 
-
-<!--            <table class="table custom">-->
-<!--                <thead class="thead-dark">-->
-<!--                <tr class="custom">-->
-<!--                    <th scope="col">Start Time</th>-->
-<!--                    <th scope="col">End Time</th>-->
-<!--                    <th scope="col">Pay Rate</th>-->
-<!--                    <th scope="col">Pay Code</th>-->
-<!--                    <th scope="col">Pay</th>-->
-
-<!--                </tr>-->
-<!--                </thead>-->
-<!--            </table>-->
+        <!--        <a class="btn btn-secondary mb-2"-->
+        <!--           th:if="${ jediEntity.timesheet.stage == T(jbc.timesheet.model.Stage).EDITING }"-->
+        <!--           th:href="@{/activity/create/in-timesheet/{timesheetId}(timesheetId = ${jediEntity.id})}">Add New Activity</a>-->
+        <ol class="gradient-list">
             <th:block th:each="jediEntity : ${jediEntityCollection}">
                 <!--/*@thymesVar id="jediEntity" type="jbc.timesheet.model.Activity"*/-->
-
-
-<!--        <a class="btn btn-secondary mb-2"-->
-<!--           th:if="${ jediEntity.timesheet.stage == T(jbc.timesheet.model.Stage).EDITING }"-->
-<!--           th:href="@{/activity/create/in-timesheet/{timesheetId}(timesheetId = ${jediEntity.id})}">Add New Activity</a>-->
-        <ul>
-            <th:block th:each="jediEntity : ${jediEntityCollection}">
-                <!--/*@thymesVar id="jediEntity" type="jbc.timesheet.model.Activity"*/-->
-<!--                TODO: Add check logic if Principal is the owner of this Activity (Timesheet)-->
+                <!--                TODO: Add check logic if Principal is the owner of this Activity (Timesheet)-->
                 <th:block th:if="${ jediEntity.timesheet.stage == T(jbc.timesheet.model.Stage).EDITING }">
                     <a th:href="@{/activity/retrieve/{id}(id=${jediEntity.id})}">
                         <th:block th:replace="::activity-line">...</th:block>
@@ -148,31 +147,28 @@
                 </th:block>
                 <th:block th:unless="${ jediEntity.timesheet.stage == T(jbc.timesheet.model.Stage).EDITING }">
 
-                        <th:block th:replace="::activity-line">...</th:block>
+                    <th:block th:replace="::activity-line">...</th:block>
 
                 </th:block>
             </th:block>
-        </ul>
-
-
-            </th:block>
-
+        </ol>
 
     </div>
 </th:block>
+
 <th:block th:fragment="activity-line">
     <!--/*@thymesVar id="jediEntity" type="jbc.timesheet.model.Activity"*/-->
-    <ol class="gradient-list">
-        <li>
-    <span th:text="${jediEntity.isoStartTime}">8:00am</span>
-    <span th:text="${jediEntity.isoEndTime}">6:00pm</span> -
-    <span th:text="${#numbers.formatDecimal(jediEntity.hours,2,2)}">12.00</span>
-    <span th:text="${jediEntity.payCode.label}">Holiday Time</span> Hours
-    <span th:text="${#numbers.formatCurrency(jediEntity.payRate)}">20.00</span>
-    x <span th:text="${jediEntity.payCode.rateFactor}">1.0</span> /hr
-    = <span th:text="${#numbers.formatCurrency(jediEntity.pay)}">20.00</span>
-        </li>
-    </ol>
+
+    <li>
+        <span th:text="${jediEntity.isoStartTime}">8:00am</span>
+        <span th:text="${jediEntity.isoEndTime}">6:00pm</span> -
+        <span th:text="${#numbers.formatDecimal(jediEntity.hours,2,2)}">12.00</span>
+        <span th:text="${jediEntity.payCode.label}">Holiday Time</span> Hours
+        <span th:text="${#numbers.formatCurrency(jediEntity.payRate)}">20.00</span>
+        x <span th:text="${jediEntity.payCode.rateFactor}">1.0</span> /hr
+        = <span th:text="${#numbers.formatCurrency(jediEntity.pay)}">20.00</span>
+    </li>
+
 </th:block>
 </body>
 </html>
