@@ -112,6 +112,10 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
 
     }
 
+    default void postRetrieve(Model model, ENTITY entity) {
+
+    }
+
     @GetMapping("/retrieve/{id}")
     default String doRetrieveById(@PathVariable("id") ID id, Model model){
         @SuppressWarnings("unchecked")
@@ -126,6 +130,8 @@ public interface JediController<REPOSITORY extends CrudRepository, ENTITY, ID> {
         }
         //TODO: Security
         preRetrieve(optionalEntity.get());
+
+        postRetrieve(model, optionalEntity.get());
 
          return jediModelAttributes.view(model);
     }

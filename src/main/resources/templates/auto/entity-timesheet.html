@@ -209,6 +209,18 @@ action handler for method 'post' of ActionType 'create'
         </th:block>
     </p>
 
+    <div class="border border-secondary my-3 mx-1 p-3">
+        <strong>Log</strong>
+        <div class="font-weight-light" style="font-size: 0.8rem; display:block;">
+            <th:block th:each="logEntry : ${log}">
+                <!--/*@thymesVar id="logEntry" type="jbc.timesheet.model.Log"*/-->
+                On <span th:text="${logEntry.timestamp}">...</span>,
+                <span th:text="${logEntry.action}">...</span>
+                by <span th:text="${logEntry.username}">...</span><br>
+            </th:block>
+        </div>
+    </div>
+
 </th:block>
 <th:block th:fragment="admin-menu-approve-reject (timesheetId)">
     <form method="#" action="#" th:method="GET" th:action="@{/timesheet/update/stage}">

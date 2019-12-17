@@ -239,4 +239,9 @@ public class TimesheetController implements JediController<TimesheetRepository, 
         }
 
     }
+
+    @Override
+    public void postRetrieve(Model model, Timesheet timesheet) {
+        model.addAttribute("log", logRepository.findAllByTimesheetIdOrderByTimestampDesc(timesheet.getId()));
+    }
 }
