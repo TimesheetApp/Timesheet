@@ -165,9 +165,9 @@ public class TimesheetController implements JediController<TimesheetRepository, 
             optionalTimesheet.get().setStage(Stage.PENDING);
             logRepository.save(Log.newLog(Action.TIMESHEET_SUBMIT, getCurrentUsername(), optionalTimesheet.get().getId(),"Stage Change"));
             emailService.sendOne(
-                    "jindanupajit@gmail.com",
-                    "Your Timesheet was submitted for review",
-                    "Hi "+getCurrentUsername()+",\nYour timesheet was submitted for review.");
+                    optionalTimesheet.get().getEmployee().getUsername(),
+                    "[SUBMITTED] Your Timesheet was submitted for review",
+                    "Hi "+optionalTimesheet.get().getEmployee().getFirstName()+", \nYour timesheet was submitted for review.\n\nJedi Timesheet Management");
 
         }
         else if ((optionalTimesheet.get().getStage() == Stage.PENDING)&&(updateTo==Stage.EDITING)) {
@@ -183,17 +183,20 @@ public class TimesheetController implements JediController<TimesheetRepository, 
             optionalTimesheet.get().setStage(Stage.APPROVED);
             logRepository.save(Log.newLog(Action.TIMESHEET_APPROVE, getCurrentUsername(), optionalTimesheet.get().getId(),"Stage Change"));
             emailService.sendOne(
-                    "jindanupajit@gmail.com",
-                    "Your Timesheet was approved",
-                    "Hi "+getCurrentUsername()+",\nYour timesheet was approved.\n\n"+reason.orElse(""));
+                    optionalTimesheet.get().getEmployee().getUsername(),
+                    "[APPROVED] Your Timesheet was approved",
+                    "Hi "+optionalTimesheet.get().getEmployee().getFirstName()+",\nYour timesheet was approved.\n\n"
+                            +reason.orElse("")+"\n\n"
+                            +getCurrentUsername()+", \nManager");
         }
         else if ((isPrincipalAnAdmin) && (optionalTimesheet.get().getStage() == Stage.PENDING)&&(updateTo==Stage.REJECTED)) {
             optionalTimesheet.get().setStage(Stage.REJECTED);
             logRepository.save(Log.newLog(Action.TIMESHEET_REJECT, getCurrentUsername(), optionalTimesheet.get().getId(),"Stage Change"));
             emailService.sendOne(
-                    "jindanupajit@gmail.com",
-                    "Your Timesheet was rejected",
-                    "Hi "+getCurrentUsername()+",\nYour timesheet was rejected.\n\n"+reason.orElse(""));
+                    getCurrentUsername(),
+                    "[REJECTED] Your Timesheet was rejected",
+                    "Hi "+optionalTimesheet.get().getEmployee().getFirstName()+",\nYour timesheet was rejected.\n\n"+reason.orElse("")+"\n\n"
+                            +getCurrentUsername()+", \nManager");
         }
         else if ((isPrincipalAnAdmin) && (optionalTimesheet.get().getStage() == Stage.APPROVED)&&(updateTo==Stage.PENDING)) {
             optionalTimesheet.get().setStage(Stage.PENDING);
