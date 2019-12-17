@@ -193,7 +193,7 @@ public class TimesheetController implements JediController<TimesheetRepository, 
             optionalTimesheet.get().setStage(Stage.REJECTED);
             logRepository.save(Log.newLog(Action.TIMESHEET_REJECT, getCurrentUsername(), optionalTimesheet.get().getId(),"Stage Change"));
             emailService.sendOne(
-                    getCurrentUsername(),
+                    optionalTimesheet.get().getEmployee().getUsername(),
                     "[REJECTED] Your Timesheet was rejected",
                     "Hi "+optionalTimesheet.get().getEmployee().getFirstName()+",\nYour timesheet was rejected.\n\n"+reason.orElse("")+"\n\n"
                             +getCurrentUsername()+", \nManager");
