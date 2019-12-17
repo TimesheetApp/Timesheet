@@ -46,7 +46,7 @@ public class MyUserDetail implements UserDetails {
     private boolean enabled;
 
     @ManyToMany(
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
             // Owner
     )

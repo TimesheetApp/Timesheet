@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.util.Optional;
 
 @Controller
@@ -30,20 +31,26 @@ public class JediSecurityController {
 
 
     @GetMapping()
-    public String login(Model model, HttpServletRequest request, @RequestParam Optional<String> logout,@RequestParam Optional<String> auto) {
+    public String login(Model model, Principal principal, HttpServletRequest request, @RequestParam Optional<String> logout, @RequestParam Optional<String> auto) {
 
-        if (logout.isPresent())
+        if (logout.isPresent() || principal== null)
             return "jedi/login";
 
         if (!auto.isPresent())
-            auto = Optional.of("admin@example.com");
+            auto = Optional.of("superemployee89@gmail.com");
+
+        Employee currentUser = employeeRepository.findByUsername(principal.getName()).orElse(null);
+
+        if (currentUser == null || !currentUser.hasAuthority("ADMIN"))
+            return "jedi/login";
 
         Employee user = jediAutoLogin(request, auto.get());
+
         if (user != null)
             model.addAttribute("jediSuccess",
                 "Jedi used the force and logged you in automatically as '"+user.getUsername()+"'");
 
-       return "/jedi/login";
+       return "jedi/login";
     }
 
     private Employee jediAutoLogin(HttpServletRequest request, String username) {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -160,8 +160,12 @@
     <span th:text="${jediEntity.address.zip}">23454</span></p>
 
 <br>
-    <a role="button" class="btn btn-outline-danger" th:href="@{/employee/delete/{id}(id=${jediEntity.id})}">Delete</a>
-    <a role="button" class="btn btn-outline-primary" th:href="@{/employee/update/{id}(id=${jediEntity.id})}">Edit</a>
+    <th:block sec:authorize="hasAuthority('ADMIN')" >
+        <a role="button" class="btn btn-outline-danger" th:href="@{/employee/delete/{id}(id=${jediEntity.id})}">Delete</a>
+    </th:block>
+    <th:block th:if="${jediIsAuthenticated and jediEntity.username == jediPrincipal.name }">
+        <a role="button" class="btn btn-outline-primary" th:href="@{/employee/update/{id}(id=${jediEntity.id})}">Edit</a>
+    </th:block>
 
 
 
@@ -175,7 +179,11 @@
                 <span th:text="${jediEntity.firstName}">John</span>
                 <span th:text="${jediEntity.lastName}">Doe</span>
                 (<span th:text="${jediEntity.username}">username@example.com</span>)
-            </a> <a class="badge badge-danger" th:href="@{/login(auto=${jediEntity.username})}">login</a>
+            </a>
+                <span class="badge badge-danger" th:if="${jediEntity.hasAuthority('ADMIN')}">Admin</span>
+                <span class="badge badge-success" th:if="${jediIsAuthenticated and jediEntity.username == jediPrincipal.name }">You</span>
+                <a class="badge badge-secondary" th:href="@{/login(auto=${jediEntity.username})}">Login</a>
+                <a sec:authorize="hasAuthority('ADMIN')" class="badge badge-primary" th:href="@{/login(auto=${jediEntity.username})}">Auto Login</a>
             </li>
         </th:block>
     </ol>

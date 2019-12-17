@@ -16,7 +16,7 @@
 
 <form th:action="@{/login}" method="post">
     <div>
-        <label>Username: <input type="text" name="username"/></label>
+        <label>Username: <input type="text" name="username" th:value="${param.auto}"/></label>
     </div>
 
     <div>

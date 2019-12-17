@@ -46,7 +46,7 @@ public class Timesheet {
 
     @OneToMany (
             cascade = {CascadeType.PERSIST, CascadeType.REFRESH},
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             orphanRemoval = true,
             mappedBy = "timesheet"
     )
