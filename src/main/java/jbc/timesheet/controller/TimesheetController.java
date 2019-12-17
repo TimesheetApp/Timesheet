@@ -230,7 +230,10 @@ public class TimesheetController implements JediController<TimesheetRepository, 
         Authority admin = authorityRepository.findByAuthority("ADMIN").orElse(new Authority());
 
         if (employee.getAuthorities().contains(admin)) {
-            return getRepository().findAllByOrderByEmployeeLastNameAscEmployeeFirstNameAscStartDateDesc();
+            if (parameters.containsKey("stage") && !parameters.get("stage").get(0).equals(""))
+                return getRepository().findAllByStageOrderByEmployeeLastNameAscEmployeeFirstNameAscStartDateDesc(Stage.valueOf(parameters.get("stage").get(0)));
+            else
+                return getRepository().findAllByOrderByEmployeeLastNameAscEmployeeFirstNameAscStartDateDesc();
         } else {
             return getRepository().findAllByEmployeeOrderByStartDateDesc(employee);
         }

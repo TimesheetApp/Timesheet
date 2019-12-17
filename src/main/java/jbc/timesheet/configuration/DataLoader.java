@@ -34,6 +34,8 @@ public class DataLoader implements CommandLineRunner {
 
         initUser("superemployee89@gmail.com", "USER");
         initUser("jindanupajit@gmail.com", "USER");
+        initUser("tfranks247@gmail.com", "USER");
+        initUser("escobar129@gmail.com", "USER");
 
     }
 

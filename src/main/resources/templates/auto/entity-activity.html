@@ -113,9 +113,14 @@
     <div class="border rounded border-secondary m-2 p-2">
         <p><strong>Activities</strong></p>
 
-        <button name="button2" sec:authorize="hasAuthority('ADMIN')" th:if="${jediIsAuthenticated and jediEntity.employee.username == jediPrincipal.name}"><a
-                th:href="@{/activity/create/in-timesheet/{timesheetId}(timesheetId = ${jediEntity.id})}">Add New
-            Activity</a></button>
+        <th:block th:if="${jediIsAuthenticated and jediEntity.employee.username == jediPrincipal.name}">
+            <th:block th:if="${jediEntity.stage == T(jbc.timesheet.model.Stage).EDITING}">
+                <button name="button2" class="my-2">
+                    <a th:href="@{/activity/create/in-timesheet/{timesheetId}(timesheetId = ${jediEntity.id})}">
+                        Add New Activity</a>
+                </button>
+            </th:block>
+        </th:block>
 
 
         <!--            <table class="table custom">-->

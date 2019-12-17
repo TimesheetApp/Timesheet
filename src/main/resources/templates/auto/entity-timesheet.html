@@ -221,12 +221,36 @@ action handler for method 'post' of ActionType 'create'
     </form>
 </th:block>
 
+<th:block th:fragment="search-block">
+    <div>
+        <form th:action="@{/timesheet/search}" method="GET" >
+
+            <label>Stage
+                <select name="stage">
+                    <option value="">-- All --</option>
+                    <option th:value="${T(jbc.timesheet.model.Stage).PENDING}">Pending Review</option>
+                    <option th:value="${T(jbc.timesheet.model.Stage).EDITING}">Editing</option>
+                    <option th:value="${T(jbc.timesheet.model.Stage).APPROVED}">Approved</option>
+                    <option th:value="${T(jbc.timesheet.model.Stage).REJECTED}">Rejected</option>
+                </select>
+            </label>
+
+
+            <input type="submit" class="btn btn-primary">
+
+        </form>
+    </div>
+</th:block>
+
+
+
 <th:block th:fragment="action-get-list">
     <h2 class="display-4">Timesheet Directory</h2>
     <div sec:authorize="!isAuthenticated()">
         You are not logged in
     </div>
     <ol sec:authorize="isAuthenticated()" class="gradient-list">
+        <th:block th:replace="::search-block">...</th:block>
         <th:block th:each="jediEntity : ${jediEntityCollection}">
             <li><a th:href="@{/timesheet/retrieve/{id}(id=${jediEntity.id})}">
                 Timesheet '<span th:text="${jediEntity.employee.lastName}">xxx</span>,
