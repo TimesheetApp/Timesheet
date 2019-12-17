@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" th:href="@{/style.css}"/>
 </head>
 <body>
 
@@ -168,7 +169,7 @@
 
 <th:block th:fragment="action-get-list">
     <h2 class="display-4">Employee Directory</h2>
-    <ul>
+    <ol class="gradient-list">
         <th:block th:each="jediEntity : ${jediEntityCollection}">
             <li><a th:href="@{/employee/retrieve/{id}(id=${jediEntity.id})}">
                 <span th:text="${jediEntity.firstName}">John</span>
@@ -177,7 +178,7 @@
             </a> <a class="badge badge-danger" th:href="@{/login(auto=${jediEntity.username})}">login</a>
             </li>
         </th:block>
-    </ul>
+    </ol>
 </th:block>
 
 </body>

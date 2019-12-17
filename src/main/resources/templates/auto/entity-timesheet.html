@@ -232,7 +232,7 @@ action handler for method 'post' of ActionType 'create'
     <div sec:authorize="!isAuthenticated()">
         You are not logged in
     </div>
-    <ul sec:authorize="isAuthenticated()">
+    <ol sec:authorize="isAuthenticated()" class="gradient-list">
         <th:block th:each="jediEntity : ${jediEntityCollection}">
             <li><a th:href="@{/timesheet/retrieve/{id}(id=${jediEntity.id})}">
                 Timesheet '<span th:text="${jediEntity.employee.lastName}">xxx</span>,
@@ -252,7 +252,7 @@ action handler for method 'post' of ActionType 'create'
                 </th:block>
             </li>
         </th:block>
-    </ul>
+    </ol>
 </th:block>
 
 

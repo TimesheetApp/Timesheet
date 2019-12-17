@@ -162,7 +162,7 @@
 </th:block>
 <th:block th:fragment="activity-line">
     <!--/*@thymesVar id="jediEntity" type="jbc.timesheet.model.Activity"*/-->
-    <ul>
+    <ol class="gradient-list">
         <li>
     <span th:text="${jediEntity.isoStartTime}">8:00am</span>
     <span th:text="${jediEntity.isoEndTime}">6:00pm</span> -
@@ -172,7 +172,7 @@
     x <span th:text="${jediEntity.payCode.rateFactor}">1.0</span> /hr
     = <span th:text="${#numbers.formatCurrency(jediEntity.pay)}">20.00</span>
         </li>
-    </ul>
+    </ol>
 </th:block>
 </body>
 </html>
