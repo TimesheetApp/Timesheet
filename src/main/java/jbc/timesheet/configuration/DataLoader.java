@@ -29,14 +29,12 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        initUser("admin@example.com", "ADMIN");
-        initUser("krissada@example.com", "ADMIN");
-        initUser("tony@example.com", "ADMIN");
-        initUser("soheila@example.com", "ADMIN");
+        initUser("supersupervisor89@gmail.com", "ADMIN");
 
-        initUser("jane@example.com", "USER");
-        initUser("john@example.com", "USER");
-        initUser("jack@example.com", "USER");
+
+        initUser("superemployee89@gmail.com", "USER");
+        initUser("jindanupajit@gmail.com", "USER");
+
     }
 
     public void autoLogin(Employee user){
@@ -47,7 +45,8 @@ public class DataLoader implements CommandLineRunner {
 
     private void initUser(String username, String authority) {
 
-
+        username = username.trim().toLowerCase();
+        authority = authority.trim().toUpperCase();
         Optional<Employee> optionalUser = employeeRepository.findByUsername(username);
         Optional<Authority> optionalAuthority = Optional.empty();
         if (authority != null) {
